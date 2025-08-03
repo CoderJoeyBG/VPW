@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Virtual Pet - Interactive Experience</title>
+    <title>My Pet Friend</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Comic+Neue:wght@300;400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Bubblegum+Sans&display=swap');
         
         * {
             margin: 0;
@@ -14,78 +14,73 @@
         }
 
         body {
-            font-family: 'Comic Neue', cursive;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #f0932b, #eb4d4b, #6c5ce7);
+            font-family: 'Fredoka', cursive;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef, #fecfef, #ff9a9e, #a8edea, #fed6e3);
             background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            animation: rainbowMove 8s ease infinite;
             min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
         }
 
-        @keyframes gradientShift {
+        @keyframes rainbowMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        .floating-hearts {
+        .floating-stars {
             position: fixed;
             top: -50px;
             pointer-events: none;
             z-index: 1000;
-            font-size: 20px;
-            color: #ff6b9d;
-            animation: floatUp 3s linear forwards;
+            font-size: 24px;
+            animation: floatUp 4s linear forwards;
         }
 
         @keyframes floatUp {
             to {
-                transform: translateY(-100vh) rotate(360deg);
+                transform: translateY(-100vh) rotate(720deg);
                 opacity: 0;
             }
         }
 
-        .sparkles {
+        .sparkle-effect {
             position: fixed;
             pointer-events: none;
             z-index: 999;
-            font-size: 16px;
-            animation: sparkle 2s ease-out forwards;
+            font-size: 20px;
+            animation: sparkleJump 2s ease-out forwards;
         }
 
-        @keyframes sparkle {
+        @keyframes sparkleJump {
             0% { transform: scale(0) rotate(0deg); opacity: 1; }
-            50% { transform: scale(1.5) rotate(180deg); opacity: 0.8; }
+            50% { transform: scale(1.8) rotate(180deg); opacity: 0.9; }
             100% { transform: scale(0) rotate(360deg); opacity: 0; }
         }
 
         .game-container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 20px auto;
             padding: 20px;
             display: grid;
-            grid-template-columns: 1fr 300px;
+            grid-template-columns: 1fr 280px;
             gap: 20px;
-            position: relative;
         }
 
         .main-screen {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            padding: 30px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-            border: 3px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 4px solid #ffb3ff;
             position: relative;
-            overflow: hidden;
         }
 
         .pet-area {
             text-align: center;
             position: relative;
-            min-height: 400px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 350px;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
             border-radius: 20px;
             margin-bottom: 20px;
             display: flex;
@@ -93,435 +88,462 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            border: 3px solid white;
         }
 
-        .weather-system {
+        .cute-clouds {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 100%;
-            pointer-events: none;
+            top: 20px;
+            left: 20px;
+            font-size: 30px;
+            opacity: 0.7;
+            animation: float 4s ease-in-out infinite;
         }
 
-        .rain {
-            position: absolute;
-            width: 2px;
-            height: 20px;
-            background: #87ceeb;
-            animation: rain 1s linear infinite;
-        }
-
-        @keyframes rain {
-            from { transform: translateY(-20px); }
-            to { transform: translateY(400px); }
-        }
-
-        .snow {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            animation: snow 3s linear infinite;
-        }
-
-        @keyframes snow {
-            from { transform: translateY(-10px) rotate(0deg); }
-            to { transform: translateY(400px) rotate(360deg); }
-        }
-
-        .pet {
-            font-size: 120px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            position: relative;
-            z-index: 10;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
-        }
-
-        .pet:hover {
-            transform: scale(1.2) rotate(5deg);
-        }
-
-        .pet.happy {
-            animation: bounce 0.6s ease-in-out;
-        }
-
-        .pet.sad {
-            animation: shake 0.5s ease-in-out;
-            filter: grayscale(30%);
-        }
-
-        .pet.sleeping {
-            animation: sleep 2s ease-in-out infinite;
-            opacity: 0.8;
-        }
-
-        .pet.sick {
-            animation: sick 1s ease-in-out infinite;
-            filter: hue-rotate(120deg);
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-30px) scale(1.1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        @keyframes sleep {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        @keyframes sick {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-2deg); }
-            75% { transform: rotate(2deg); }
-        }
-
-        .pet-name {
-            font-family: 'Fredoka One', cursive;
-            font-size: 32px;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
-        }
-
-        .level-system {
+        .cute-sun {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255,255,255,0.9);
-            padding: 10px 15px;
-            border-radius: 15px;
-            font-weight: bold;
-            color: #333;
+            font-size: 35px;
+            animation: rotate 10s linear infinite;
         }
 
-        .xp-bar {
-            width: 200px;
-            height: 10px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 5px;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .pet {
+            font-size: 100px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            z-index: 10;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2));
+        }
+
+        .pet:hover {
+            transform: scale(1.3) rotate(10deg);
+        }
+
+        .pet.super-happy {
+            animation: bounceHappy 0.8s ease-in-out;
+        }
+
+        .pet.sleepy {
+            animation: sleepyBob 3s ease-in-out infinite;
+            opacity: 0.8;
+        }
+
+        .pet.excited {
+            animation: wiggle 0.6s ease-in-out;
+        }
+
+        @keyframes bounceHappy {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-20px) scale(1.1) rotate(-5deg); }
+            75% { transform: translateY(-15px) scale(1.1) rotate(5deg); }
+        }
+
+        @keyframes sleepyBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-8deg); }
+            75% { transform: rotate(8deg); }
+        }
+
+        .pet-name {
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 28px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+            background: rgba(255,182,193,0.8);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .star-level {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,223,0,0.9);
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+            color: #333;
+            border: 2px solid white;
+        }
+
+        .happy-bar {
+            width: 150px;
+            height: 8px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 4px;
             margin-top: 5px;
             overflow: hidden;
         }
 
-        .xp-fill {
+        .happy-fill {
             height: 100%;
-            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
-            transition: width 0.5s ease;
-            border-radius: 5px;
+            background: linear-gradient(90deg, #ff6b9d 0%, #c44569 100%);
+            transition: width 0.6s ease;
+            border-radius: 4px;
         }
 
-        .stats-grid {
+        .needs-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+            gap: 12px;
             margin: 20px 0;
         }
 
-        .stat-card {
+        .need-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 18px;
             padding: 15px;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            border: 3px solid #e6f3ff;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        .need-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+        .need-card.happy {
+            border-color: #4ecdc4;
+            background: linear-gradient(135deg, #e8f8f5, #ffffff);
         }
 
-        .stat-icon {
-            font-size: 24px;
+        .need-card.okay {
+            border-color: #f39c12;
+            background: linear-gradient(135deg, #fef9e7, #ffffff);
+        }
+
+        .need-card.sad {
+            border-color: #ff6b9d;
+            background: linear-gradient(135deg, #fdf2f8, #ffffff);
+            animation: gentlePulse 2s infinite;
+        }
+
+        @keyframes gentlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .need-icon {
+            font-size: 26px;
             margin-bottom: 8px;
         }
 
-        .stat-name {
+        .need-name {
             font-size: 12px;
             color: #666;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            font-weight: 600;
         }
 
-        .stat-value {
-            font-size: 18px;
-            font-weight: bold;
+        .need-number {
+            font-size: 16px;
+            font-weight: 600;
             color: #333;
         }
 
-        .stat-bar {
+        .need-bar {
             width: 100%;
             height: 6px;
-            background: #e0e0e0;
+            background: #f0f0f0;
             border-radius: 3px;
             margin-top: 8px;
             overflow: hidden;
         }
 
-        .stat-fill {
+        .need-fill {
             height: 100%;
             border-radius: 3px;
-            transition: all 0.5s ease;
+            transition: all 0.6s ease;
         }
 
-        .controls {
+        .care-buttons {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
-        .btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .care-btn {
+            background: linear-gradient(135deg, #ff6b9d, #ee5a6f);
             color: white;
             border: none;
             padding: 15px;
-            border-radius: 15px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 18px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             position: relative;
             overflow: hidden;
+            font-family: 'Fredoka', cursive;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .btn::before {
+        .care-btn::before {
             content: '';
             position: absolute;
             top: 50%;
             left: 50%;
             width: 0;
             height: 0;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.3);
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
         }
 
-        .btn:hover::before {
+        .care-btn:hover::before {
             width: 200px;
             height: 200px;
         }
 
-        .btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        .care-btn:hover {
+            transform: translateY(-4px) scale(1.08);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
         }
 
-        .btn:active {
-            transform: translateY(0) scale(0.98);
+        .care-btn:active {
+            transform: translateY(0) scale(1.02);
         }
+
+        .care-btn.feed { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+        .care-btn.play { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .care-btn.clean { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .care-btn.sleep { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+        .care-btn.hug { background: linear-gradient(135deg, #ffecd2, #fcb69f); }
+        .care-btn.surprise { background: linear-gradient(135deg, #ff9a9e, #fecfef); }
 
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
 
-        .mini-game-panel, .achievements-panel, .shop-panel {
+        .fun-panel {
             background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(20px);
             border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            padding: 18px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border: 3px solid #ff9a9e;
         }
 
         .panel-title {
-            font-family: 'Fredoka One', cursive;
-            font-size: 20px;
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 18px;
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-align: center;
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .mini-game-btn {
+        .game-btn {
             width: 100%;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            font-size: 13px;
+            padding: 12px;
         }
 
-        .achievement {
+        .star-badge {
             display: flex;
             align-items: center;
-            padding: 10px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 8px;
+            background: #f8f9ff;
+            border-radius: 12px;
             border-left: 4px solid #4ecdc4;
+            font-size: 12px;
         }
 
-        .achievement.unlocked {
-            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+        .star-badge.earned {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
             color: white;
             border-left-color: #fff;
+            animation: starShine 2s infinite;
         }
 
-        .achievement-icon {
-            font-size: 20px;
-            margin-right: 10px;
+        @keyframes starShine {
+            0%, 100% { box-shadow: 0 0 5px rgba(78, 205, 196, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(78, 205, 196, 0.8); }
         }
 
-        .achievement-text {
-            font-size: 12px;
-            flex: 1;
+        .star-icon {
+            font-size: 18px;
+            margin-right: 8px;
         }
 
-        .shop-item {
+        .treat-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 8px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            font-size: 12px;
         }
 
-        .shop-item.owned {
-            background: #d4edda;
+        .treat-item.bought {
+            background: #e8f8f5;
+            border: 2px solid #4ecdc4;
         }
 
-        .coins-display {
+        .hearts-display {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(255,215,0,0.9);
-            padding: 10px 15px;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,182,193,0.9);
+            padding: 8px 12px;
             border-radius: 15px;
-            font-weight: bold;
+            font-weight: 600;
             color: #333;
-            font-size: 18px;
+            font-size: 16px;
+            border: 2px solid white;
         }
 
-        .message-bubble {
+        .chat-bubble {
             position: absolute;
-            top: 50px;
+            top: 40px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255,255,255,0.95);
-            padding: 15px 20px;
+            background: rgba(255,255,255,0.98);
+            padding: 12px 18px;
             border-radius: 20px;
-            max-width: 250px;
+            max-width: 220px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             z-index: 100;
+            font-size: 14px;
+            font-weight: 500;
+            border: 2px solid #ff9a9e;
         }
 
-        .message-bubble.show {
+        .chat-bubble.show {
             opacity: 1;
-            transform: translateX(-50%) translateY(-10px);
+            transform: translateX(-50%) translateY(-8px);
         }
 
-        .message-bubble::after {
+        .chat-bubble::after {
             content: '';
             position: absolute;
-            bottom: -10px;
+            bottom: -8px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 10px solid rgba(255,255,255,0.95);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
         }
 
-        .mini-game-overlay {
+        .game-popup {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.7);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
 
-        .mini-game-content {
+        .game-window {
             background: white;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 500px;
+            border-radius: 25px;
+            padding: 25px;
+            max-width: 450px;
             width: 90%;
             text-align: center;
+            border: 4px solid #ff9a9e;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
 
-        .game-grid {
+        .close-button {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .simple-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin: 20px 0;
+            gap: 8px;
+            margin: 15px 0;
         }
 
-        .memory-card {
+        .game-card {
             aspect-ratio: 1;
-            background: #667eea;
-            border-radius: 10px;
+            background: #ff9a9e;
+            border-radius: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
             transition: all 0.3s ease;
+            border: 2px solid white;
         }
 
-        .memory-card:hover {
-            transform: scale(1.05);
+        .game-card:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        .memory-card.flipped {
+        .game-card.found {
             background: #4ecdc4;
             transform: rotateY(180deg);
         }
 
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-        }
-
-        .notification {
+        .happy-notification {
             position: fixed;
             top: 20px;
             right: 20px;
             background: #4ecdc4;
             color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
+            padding: 12px 18px;
+            border-radius: 12px;
             transform: translateX(400px);
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease;
             z-index: 1001;
+            font-weight: 600;
+            border: 2px solid white;
         }
 
-        .notification.show {
+        .happy-notification.show {
             transform: translateX(0);
         }
 
@@ -531,11 +553,11 @@
                 padding: 10px;
             }
             
-            .controls {
+            .care-buttons {
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            .stats-grid {
+            .needs-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -544,186 +566,183 @@
 <body>
     <div class="game-container">
         <div class="main-screen">
-            <div class="coins-display" id="coins">💰 0 coins</div>
-            <div class="level-system">
-                <div>Level <span id="level">1</span></div>
-                <div class="xp-bar">
-                    <div class="xp-fill" id="xpFill"></div>
+            <div class="hearts-display" id="hearts">❤️ 0 hearts</div>
+            <div class="star-level">
+                <div>⭐ Level <span id="level">1</span></div>
+                <div class="happy-bar">
+                    <div class="happy-fill" id="starFill"></div>
                 </div>
-                <div><span id="xp">0</span>/100 XP</div>
+                <div><span id="stars">0</span>/100 stars</div>
             </div>
             
             <div class="pet-area" id="petArea">
-                <div class="weather-system" id="weather"></div>
-                <div class="message-bubble" id="messageBubble"></div>
+                <div class="cute-clouds">☁️</div>
+                <div class="cute-sun">☀️</div>
+                <div class="chat-bubble" id="chatBubble"></div>
                 <div class="pet-name" id="petName">Buddy</div>
-                <div class="pet" id="pet" onclick="petClick()">🐱</div>
+                <div class="pet" id="pet" onclick="hugPet()">🐱</div>
             </div>
             
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">🍎</div>
-                    <div class="stat-name">Hunger</div>
-                    <div class="stat-value" id="hungerValue">100</div>
-                    <div class="stat-bar">
-                        <div class="stat-fill" id="hungerBar" style="background: #e74c3c;"></div>
+            <div class="needs-grid">
+                <div class="need-card" id="hungerCard">
+                    <div class="need-icon">🍎</div>
+                    <div class="need-name">Hungry?</div>
+                    <div class="need-number" id="hungerValue">100</div>
+                    <div class="need-bar">
+                        <div class="need-fill" id="hungerBar" style="background: #4ecdc4;"></div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">😊</div>
-                    <div class="stat-name">Happiness</div>
-                    <div class="stat-value" id="happinessValue">100</div>
-                    <div class="stat-bar">
-                        <div class="stat-fill" id="happinessBar" style="background: #f39c12;"></div>
+                <div class="need-card" id="happyCard">
+                    <div class="need-icon">😊</div>
+                    <div class="need-name">Happy?</div>
+                    <div class="need-number" id="happyValue">100</div>
+                    <div class="need-bar">
+                        <div class="need-fill" id="happyBar" style="background: #f093fb;"></div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">❤️</div>
-                    <div class="stat-name">Health</div>
-                    <div class="stat-value" id="healthValue">100</div>
-                    <div class="stat-bar">
-                        <div class="stat-fill" id="healthBar" style="background: #27ae60;"></div>
+                <div class="need-card" id="healthCard">
+                    <div class="need-icon">❤️</div>
+                    <div class="need-name">Healthy?</div>
+                    <div class="need-number" id="healthValue">100</div>
+                    <div class="need-bar">
+                        <div class="need-fill" id="healthBar" style="background: #ff6b9d;"></div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⚡</div>
-                    <div class="stat-name">Energy</div>
-                    <div class="stat-value" id="energyValue">100</div>
-                    <div class="stat-bar">
-                        <div class="stat-fill" id="energyBar" style="background: #3498db;"></div>
+                <div class="need-card" id="energyCard">
+                    <div class="need-icon">⚡</div>
+                    <div class="need-name">Sleepy?</div>
+                    <div class="need-number" id="energyValue">100</div>
+                    <div class="need-bar">
+                        <div class="need-fill" id="energyBar" style="background: #ffecd2;"></div>
                     </div>
                 </div>
             </div>
             
-            <div class="controls">
-                <button class="btn" onclick="feedPet()">🍎 Feed</button>
-                <button class="btn" onclick="playWithPet()">🎾 Play</button>
-                <button class="btn" onclick="cleanPet()">🛁 Clean</button>
-                <button class="btn" onclick="sleepPet()">😴 Sleep</button>
-                <button class="btn" onclick="petPet()">💕 Pet</button>
-                <button class="btn" onclick="toggleWeather()">🌦️ Weather</button>
+            <div class="care-buttons">
+                <button class="care-btn feed" onclick="giveTreat()">🍎 Give Treat</button>
+                <button class="care-btn play" onclick="playTogether()">🎾 Play Time</button>
+                <button class="care-btn clean" onclick="giveBath()">🛁 Bath Time</button>
+                <button class="care-btn sleep" onclick="napTime()">😴 Nap Time</button>
+                <button class="care-btn hug" onclick="hugPet()">🤗 Big Hug</button>
+                <button class="care-btn surprise" onclick="makeSurprise()">🎁 Surprise!</button>
             </div>
         </div>
         
         <div class="sidebar">
-            <div class="mini-game-panel">
-                <div class="panel-title">🎮 Mini Games</div>
-                <button class="btn mini-game-btn" onclick="openMemoryGame()">🧠 Memory Game</button>
-                <button class="btn mini-game-btn" onclick="openFeedingGame()">🍕 Feeding Frenzy</button>
-                <button class="btn mini-game-btn" onclick="openColorGame()">🌈 Color Match</button>
+            <div class="fun-panel">
+                <div class="panel-title">🎮 Fun Games</div>
+                <button class="care-btn game-btn" onclick="openMatchGame()">🧩 Match Game</button>
+                <button class="care-btn game-btn" onclick="openCatchGame()">🍓 Catch Treats</button>
+                <button class="care-btn game-btn" onclick="openColorGame()">🌈 Color Fun</button>
             </div>
             
-            <div class="achievements-panel">
-                <div class="panel-title">🏆 Achievements</div>
-                <div id="achievementsList"></div>
+            <div class="fun-panel">
+                <div class="panel-title">⭐ Star Badges</div>
+                <div id="badgesList"></div>
             </div>
             
-            <div class="shop-panel">
-                <div class="panel-title">🛒 Pet Shop</div>
-                <div id="shopItems"></div>
+            <div class="fun-panel">
+                <div class="panel-title">🛍️ Treat Shop</div>
+                <div id="treatShop"></div>
             </div>
         </div>
     </div>
     
-    <div class="mini-game-overlay" id="miniGameOverlay">
-        <div class="mini-game-content">
-            <button class="close-btn" onclick="closeMiniGame()">×</button>
-            <div id="miniGameContent"></div>
+    <div class="game-popup" id="gamePopup">
+        <div class="game-window">
+            <button class="close-button" onclick="closeGame()">×</button>
+            <div id="gameContent"></div>
         </div>
     </div>
     
-    <div class="notification" id="notification"></div>
+    <div class="happy-notification" id="notification"></div>
 
     <script>
-        class UltimateVirtualPet {
+        class KidFriendlyPet {
             constructor() {
-                this.stats = {
+                this.needs = {
                     hunger: 100,
-                    happiness: 100,
-                    health: 100,
+                    happy: 100,
+                    health: 100, 
                     energy: 100
                 };
                 
                 this.level = 1;
-                this.xp = 0;
-                this.coins = 0;
+                this.stars = 0;
+                this.hearts = 0;
                 this.age = 0;
                 this.name = 'Buddy';
                 this.petType = '🐱';
                 this.isAlive = true;
-                this.mood = 'happy';
-                this.weatherType = 'sunny';
+                this.mood = 'super-happy';
                 
-                this.petTypes = ['🐱', '🐶', '🐰', '🐸', '🐧', '🦊', '🐼', '🐨', '🐯', '🦁'];
-                this.names = ['Buddy', 'Luna', 'Max', 'Bella', 'Charlie', 'Lucy', 'Rocky', 'Daisy', 'Milo', 'Coco'];
-                this.weatherTypes = ['sunny', 'rainy', 'snowy', 'cloudy'];
+                this.petTypes = ['🐱', '🐶', '🐰', '🐸', '🐧', '🦊', '🐼', '🐨', '🦄', '🐯'];
+                this.names = ['Buddy', 'Luna', 'Sunny', 'Cookie', 'Sparkle', 'Rainbow', 'Happy', 'Joy', 'Star', 'Angel'];
                 
-                this.achievements = [
-                    { id: 'first_pet', name: 'First Pet', description: 'Pet your companion for the first time', unlocked: false, icon: '👋' },
-                    { id: 'well_fed', name: 'Well Fed', description: 'Keep hunger above 80 for 5 minutes', unlocked: false, icon: '🍽️' },
-                    { id: 'happy_camper', name: 'Happy Camper', description: 'Keep happiness at 100 for 3 minutes', unlocked: false, icon: '😄' },
-                    { id: 'level_5', name: 'Growing Up', description: 'Reach level 5', unlocked: false, icon: '📈' },
-                    { id: 'rich_owner', name: 'Rich Owner', description: 'Collect 1000 coins', unlocked: false, icon: '💰' },
-                    { id: 'game_master', name: 'Game Master', description: 'Complete 10 mini-games', unlocked: false, icon: '🎮' }
+                this.badges = [
+                    { id: 'first_hug', name: 'First Hug', description: 'Give your first hug!', earned: false, icon: '🤗' },
+                    { id: 'treat_giver', name: 'Treat Giver', description: 'Give 10 treats', earned: false, icon: '🍎', count: 0 },
+                    { id: 'play_buddy', name: 'Play Buddy', description: 'Play 10 times', earned: false, icon: '🎾', count: 0 },
+                    { id: 'super_star', name: 'Super Star', description: 'Reach level 3', earned: false, icon: '⭐' },
+                    { id: 'heart_collector', name: 'Heart Collector', description: 'Collect 100 hearts', earned: false, icon: '💖' },
+                    { id: 'game_master', name: 'Game Master', description: 'Play 5 games', earned: false, icon: '🏆', count: 0 }
                 ];
                 
-                this.shopItems = [
-                    { id: 'food_upgrade', name: 'Premium Food', price: 100, owned: false, icon: '🥩' },
-                    { id: 'toy_upgrade', name: 'Super Toy', price: 150, owned: false, icon: '🧸' },
-                    { id: 'health_potion', name: 'Health Potion', price: 200, owned: false, icon: '🧪' },
-                    { id: 'energy_drink', name: 'Energy Drink', price: 75, owned: false, icon: '⚡' }
+                this.treats = [
+                    { id: 'yummy_apple', name: 'Yummy Apple', price: 10, owned: false, icon: '🍎' },
+                    { id: 'fun_toy', name: 'Fun Toy', price: 15, owned: false, icon: '🧸' },
+                    { id: 'magic_potion', name: 'Magic Potion', price: 20, owned: false, icon: '🧪' },
+                    { id: 'energy_cookie', name: 'Energy Cookie', price: 8, owned: false, icon: '🍪' }
                 ];
                 
-                this.gamesCompleted = 0;
+                this.gamesPlayed = 0;
                 this.lastUpdate = Date.now();
                 this.birthTime = Date.now();
                 
-                this.initializeGame();
+                this.startFun();
             }
             
-            initializeGame() {
-                this.startGameLoop();
-                this.updateDisplay();
-                this.renderAchievements();
-                this.renderShop();
-                this.showMessage("Welcome! Take great care of your new pet! 🎉");
-                this.changeWeather();
+            startFun() {
+                this.gameLoop();
+                this.updateEverything();
+                this.showBadges();
+                this.showTreats();
+                this.sayHello("Hi! I'm your new pet friend! Let's have fun together! 🌟");
                 
-                // Start weather cycle
-                setInterval(() => this.changeWeather(), 30000);
+                // Make things happen automatically
+                setInterval(() => this.autoFun(), 30000);
             }
             
-            startGameLoop() {
+            gameLoop() {
                 setInterval(() => {
                     if (this.isAlive) {
-                        this.updateStats();
+                        this.updateNeeds();
                         this.updateAge();
                         this.updateMood();
-                        this.updateDisplay();
-                        this.checkAchievements();
-                        this.earnPassiveCoins();
+                        this.updateEverything();
+                        this.checkBadges();
+                        this.earnHearts();
                     }
-                }, 2000);
+                }, 3000);
             }
             
-            updateStats() {
-                // Natural decay
-                this.stats.hunger = Math.max(0, this.stats.hunger - (Math.random() * 1.5 + 0.5));
-                this.stats.happiness = Math.max(0, this.stats.happiness - (Math.random() * 1 + 0.3));
-                this.stats.energy = Math.max(0, this.stats.energy - (Math.random() * 1.2 + 0.4));
+            updateNeeds() {
+                // Needs go down slowly
+                this.needs.hunger = Math.max(0, this.needs.hunger - (Math.random() * 1 + 0.3));
+                this.needs.happy = Math.max(0, this.needs.happy - (Math.random() * 0.8 + 0.2));
+                this.needs.energy = Math.max(0, this.needs.energy - (Math.random() * 0.9 + 0.3));
                 
-                // Health depends on other stats
-                if (this.stats.hunger < 20 || this.stats.happiness < 20 || this.stats.energy < 15) {
-                    this.stats.health = Math.max(0, this.stats.health - (Math.random() * 2 + 0.5));
-                } else if (this.stats.hunger > 70 && this.stats.happiness > 70 && this.stats.energy > 50) {
-                    this.stats.health = Math.min(100, this.stats.health + (Math.random() * 0.5 + 0.2));
+                // Health depends on other needs
+                if (this.needs.hunger < 30 || this.needs.happy < 30 || this.needs.energy < 20) {
+                    this.needs.health = Math.max(0, this.needs.health - (Math.random() * 1 + 0.3));
+                } else if (this.needs.hunger > 70 && this.needs.happy > 70 && this.needs.energy > 50) {
+                    this.needs.health = Math.min(100, this.needs.health + (Math.random() * 0.3 + 0.1));
                 }
                 
-                // Check if pet dies
-                if (this.stats.health <= 0) {
-                    this.isAlive = false;
-                    this.mood = 'dead';
-                    this.showMessage("💔 Your pet has passed away... They had a good life!");
+                // Keep pet alive and happy for kids
+                if (this.needs.health < 10) {
+                    this.needs.health = 20;
+                    this.sayHello("I need some love! Can you help me? 🥺");
                 }
             }
             
@@ -733,415 +752,459 @@
             }
             
             updateMood() {
-                const avgStat = (this.stats.hunger + this.stats.happiness + this.stats.health + this.stats.energy) / 4;
+                const avgNeed = (this.needs.hunger + this.needs.happy + this.needs.health + this.needs.energy) / 4;
                 
-                if (!this.isAlive) {
-                    this.mood = 'dead';
-                } else if (this.stats.energy < 20) {
-                    this.mood = 'sleeping';
-                } else if (this.stats.health < 30) {
-                    this.mood = 'sick';
-                } else if (avgStat > 80) {
-                    this.mood = 'happy';
-                } else if (avgStat > 40) {
-                    this.mood = 'neutral';
+                if (this.needs.energy < 25) {
+                    this.mood = 'sleepy';
+                } else if (avgNeed > 75) {
+                    this.mood = 'super-happy';
+                } else if (avgNeed > 40) {
+                    this.mood = 'excited';
                 } else {
-                    this.mood = 'sad';
+                    this.mood = 'sleepy';
                 }
             }
             
-            earnPassiveCoins() {
-                if (this.isAlive && Math.random() < 0.1) {
-                    this.coins += Math.floor(Math.random() * 3) + 1;
+            earnHearts() {
+                if (this.isAlive && Math.random() < 0.15) {
+                    this.hearts += Math.floor(Math.random() * 2) + 1;
                 }
             }
             
-            feedPet() {
-                if (!this.isAlive) return;
+            autoFun() {
+                const funThings = [
+                    "Look! I found a pretty flower! 🌸",
+                    "Wanna play a game together? 🎮",
+                    "I love being your friend! 💕", 
+                    "What's your favorite color? Mine's rainbow! 🌈",
+                    "Did you know I can do a happy dance? 💃"
+                ];
                 
-                const bonus = this.shopItems.find(item => item.id === 'food_upgrade' && item.owned) ? 1.5 : 1;
-                
-                this.stats.hunger = Math.min(100, this.stats.hunger + (25 * bonus));
-                this.stats.happiness = Math.min(100, this.stats.happiness + 5);
-                this.stats.energy = Math.min(100, this.stats.energy + 10);
-                
-                this.gainXP(10);
-                this.coins += 2;
-                this.showMessage(bonus > 1 ? "Premium food is delicious! 🥩✨" : "Yummy! Thanks for the food! 😋");
-                this.createHearts();
-                this.updateDisplay();
+                this.sayHello(funThings[Math.floor(Math.random() * funThings.length)]);
+                this.makeStars();
             }
             
-            playWithPet() {
+            giveTreat() {
                 if (!this.isAlive) return;
                 
-                if (this.stats.energy < 15) {
-                    this.showMessage("I'm too tired to play! 😴");
+                const bonus = this.treats.find(t => t.id === 'yummy_apple' && t.owned) ? 1.5 : 1;
+                
+                this.needs.hunger = Math.min(100, this.needs.hunger + (30 * bonus));
+                this.needs.happy = Math.min(100, this.needs.happy + 8);
+                this.needs.energy = Math.min(100, this.needs.energy + 12);
+                
+                this.getStars(12);
+                this.hearts += 3;
+                
+                const happyMsgs = [
+                    "Yummy! Thank you so much! 😋",
+                    "This tastes amazing! More please! 🍎✨",
+                    "You're the best friend ever! 🌟",
+                    "Mmm! My tummy is happy now! 😊"
+                ];
+                
+                this.sayHello(happyMsgs[Math.floor(Math.random() * happyMsgs.length)]);
+                this.makeHearts();
+                this.updateEverything();
+                
+                // Count for badge
+                const treatBadge = this.badges.find(b => b.id === 'treat_giver');
+                if (treatBadge && !treatBadge.earned) {
+                    treatBadge.count = (treatBadge.count || 0) + 1;
+                }
+            }
+            
+            playTogether() {
+                if (!this.isAlive) return;
+                
+                if (this.needs.energy < 20) {
+                    this.sayHello("I'm too sleepy to play right now! 😴");
                     return;
                 }
                 
-                const bonus = this.shopItems.find(item => item.id === 'toy_upgrade' && item.owned) ? 1.5 : 1;
+                const bonus = this.treats.find(t => t.id === 'fun_toy' && t.owned) ? 1.5 : 1;
                 
-                this.stats.happiness = Math.min(100, this.stats.happiness + (20 * bonus));
-                this.stats.energy = Math.max(0, this.stats.energy - 10);
-                this.stats.hunger = Math.max(0, this.stats.hunger - 5);
+                this.needs.happy = Math.min(100, this.needs.happy + (25 * bonus));
+                this.needs.energy = Math.max(0, this.needs.energy - 12);
+                this.needs.hunger = Math.max(0, this.needs.hunger - 8);
                 
-                this.gainXP(15);
-                this.coins += 3;
-                this.showMessage(bonus > 1 ? "This super toy is amazing! 🧸⭐" : "That was so much fun! 🎉");
-                this.createSparkles();
-                this.updateDisplay();
-            }
-            
-            cleanPet() {
-                if (!this.isAlive) return;
+                this.getStars(15);
+                this.hearts += 4;
                 
-                this.stats.health = Math.min(100, this.stats.health + 20);
-                this.stats.happiness = Math.min(100, this.stats.happiness + 10);
-                
-                this.gainXP(8);
-                this.coins += 2;
-                this.showMessage("Ahh, so fresh and clean! ✨");
-                this.createSparkles();
-                this.updateDisplay();
-            }
-            
-            sleepPet() {
-                if (!this.isAlive) return;
-                
-                const bonus = this.shopItems.find(item => item.id === 'energy_drink' && item.owned) ? 1.3 : 1;
-                
-                this.stats.energy = Math.min(100, this.stats.energy + (35 * bonus));
-                this.stats.health = Math.min(100, this.stats.health + 15);
-                this.stats.hunger = Math.max(0, this.stats.hunger - 3);
-                
-                this.gainXP(12);
-                this.showMessage(bonus > 1 ? "Super energized nap! ⚡💤" : "Zzz... That was refreshing! 💤");
-                this.updateDisplay();
-            }
-            
-            petPet() {
-                if (!this.isAlive) return;
-                
-                this.stats.happiness = Math.min(100, this.stats.happiness + 8);
-                this.gainXP(5);
-                this.coins += 1;
-                
-                const messages = [
-                    "That feels nice! 🥰",
-                    "I love you too! 💕",
-                    "More pets please! 😊",
-                    "You're the best! 🌟"
+                const playMsgs = [
+                    "Wheee! That was so much fun! 🎉",
+                    "I love playing with you! 🎾✨",
+                    "Let's play again soon! 😄",
+                    "You make me so happy! 🌈"
                 ];
                 
-                this.showMessage(messages[Math.floor(Math.random() * messages.length)]);
-                this.createHearts();
-                this.updateDisplay();
+                this.sayHello(playMsgs[Math.floor(Math.random() * playMsgs.length)]);
+                this.makeStars();
+                this.updateEverything();
+                
+                // Count for badge
+                const playBadge = this.badges.find(b => b.id === 'play_buddy');
+                if (playBadge && !playBadge.earned) {
+                    playBadge.count = (playBadge.count || 0) + 1;
+                }
             }
             
-            petClick() {
-                this.petPet();
+            giveBath() {
+                if (!this.isAlive) return;
+                
+                this.needs.health = Math.min(100, this.needs.health + 25);
+                this.needs.happy = Math.min(100, this.needs.happy + 12);
+                
+                this.getStars(10);
+                this.hearts += 2;
+                
+                const bathMsgs = [
+                    "Splash splash! I'm so clean now! 🛁",
+                    "Bath time is fun time! ✨",
+                    "I smell like flowers now! 🌸",
+                    "Thank you for keeping me clean! 🧼"
+                ];
+                
+                this.sayHello(bathMsgs[Math.floor(Math.random() * bathMsgs.length)]);
+                this.makeStars();
+                this.updateEverything();
+            }
+            
+            napTime() {
+                if (!this.isAlive) return;
+                
+                const bonus = this.treats.find(t => t.id === 'energy_cookie' && t.owned) ? 1.3 : 1;
+                
+                this.needs.energy = Math.min(100, this.needs.energy + (40 * bonus));
+                this.needs.health = Math.min(100, this.needs.health + 15);
+                this.needs.hunger = Math.max(0, this.needs.hunger - 5);
+                
+                this.getStars(12);
+                this.hearts += 2;
+                
+                const sleepMsgs = [
+                    "Zzz... That was a great nap! 💤",
+                    "I feel so much better now! ⭐",
+                    "Sweet dreams were so nice! 🌙",
+                    "Thanks for tucking me in! 😊"
+                ];
+                
+                this.sayHello(sleepMsgs[Math.floor(Math.random() * sleepMsgs.length)]);
+                this.updateEverything();
+            }
+            
+            hugPet() {
+                if (!this.isAlive) return;
+                
+                this.needs.happy = Math.min(100, this.needs.happy + 15);
+                this.getStars(8);
+                this.hearts += 2;
+                
+                const hugMsgs = [
+                    "I love your hugs so much! 🤗",
+                    "Hugs make everything better! 💕",
+                    "You give the best hugs ever! 🌟",
+                    "More hugs please! 🥰",
+                    "Your hugs are magical! ✨"
+                ];
+                
+                this.sayHello(hugMsgs[Math.floor(Math.random() * hugMsgs.length)]);
+                this.makeHearts();
+                this.updateEverything();
                 
                 // Special pet animation
                 const petElement = document.getElementById('pet');
-                petElement.classList.add('happy');
+                petElement.classList.add('super-happy');
                 setTimeout(() => {
-                    petElement.classList.remove('happy');
-                }, 600);
-            }
-            
-            toggleWeather() {
-                const currentIndex = this.weatherTypes.indexOf(this.weatherType);
-                const nextIndex = (currentIndex + 1) % this.weatherTypes.length;
-                this.weatherType = this.weatherTypes[nextIndex];
-                this.changeWeather();
+                    petElement.classList.remove('super-happy');
+                }, 800);
                 
-                this.showMessage(`Weather changed to ${this.weatherType}! 🌦️`);
-                this.gainXP(3);
-            }
-            
-            changeWeather() {
-                const weatherEl = document.getElementById('weather');
-                weatherEl.innerHTML = '';
-                
-                if (this.weatherType === 'rainy') {
-                    for (let i = 0; i < 50; i++) {
-                        const rain = document.createElement('div');
-                        rain.className = 'rain';
-                        rain.style.left = Math.random() * 100 + '%';
-                        rain.style.animationDelay = Math.random() * 2 + 's';
-                        weatherEl.appendChild(rain);
-                    }
-                } else if (this.weatherType === 'snowy') {
-                    for (let i = 0; i < 30; i++) {
-                        const snow = document.createElement('div');
-                        snow.className = 'snow';
-                        snow.style.left = Math.random() * 100 + '%';
-                        snow.style.animationDelay = Math.random() * 3 + 's';
-                        weatherEl.appendChild(snow);
-                    }
-                }
-                
-                // Change background based on weather
-                const petArea = document.getElementById('petArea');
-                switch (this.weatherType) {
-                    case 'sunny':
-                        petArea.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                        break;
-                    case 'rainy':
-                        petArea.style.background = 'linear-gradient(135deg, #4a6cf7 0%, #667eea 100%)';
-                        break;
-                    case 'snowy':
-                        petArea.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
-                        break;
-                    case 'cloudy':
-                        petArea.style.background = 'linear-gradient(135deg, #9fa4c4 0%, #a8a8a8 100%)';
-                        break;
+                // Unlock first hug badge
+                const hugBadge = this.badges.find(b => b.id === 'first_hug');
+                if (!hugBadge.earned) {
+                    hugBadge.earned = true;
+                    this.showHappyNews('You earned your first badge! 🏆');
+                    this.hearts += 10;
+                    this.showBadges();
                 }
             }
             
-            gainXP(amount) {
-                this.xp += amount;
+            makeSurprise() {
+                if (!this.isAlive) return;
                 
-                while (this.xp >= this.getXPRequired()) {
-                    this.xp -= this.getXPRequired();
+                const surprises = [
+                    { msg: "Surprise! I learned a new trick! ✨", bonus: { happy: 20, stars: 15 }},
+                    { msg: "Look! I found a treasure! 💎", bonus: { hearts: 10, stars: 12 }},
+                    { msg: "Ta-da! Magic sparkles everywhere! 🌟", bonus: { happy: 15, energy: 10 }},
+                    { msg: "Surprise dance party! 💃", bonus: { happy: 25, stars: 20 }}
+                ];
+                
+                const surprise = surprises[Math.floor(Math.random() * surprises.length)];
+                
+                Object.keys(surprise.bonus).forEach(key => {
+                    if (key === 'hearts') {
+                        this.hearts += surprise.bonus[key];
+                    } else if (key === 'stars') {
+                        this.getStars(surprise.bonus[key]);
+                    } else {
+                        this.needs[key] = Math.min(100, this.needs[key] + surprise.bonus[key]);
+                    }
+                });
+                
+                this.sayHello(surprise.msg);
+                this.makeStars();
+                this.makeHearts();
+                this.updateEverything();
+            }
+            
+            getStars(amount) {
+                this.stars += amount;
+                
+                while (this.stars >= this.getStarsNeeded()) {
+                    this.stars -= this.getStarsNeeded();
                     this.level++;
-                    this.showNotification(`Level Up! Now level ${this.level}! 🎉`);
-                    this.coins += this.level * 10;
-                    this.createSparkles();
+                    this.showHappyNews(`Level Up! You're now level ${this.level}! 🎉`);
+                    this.hearts += this.level * 5;
+                    this.makeStars();
                 }
             }
             
-            getXPRequired() {
-                return 100 + (this.level - 1) * 50;
+            getStarsNeeded() {
+                return 100 + (this.level - 1) * 30;
             }
             
-            createHearts() {
-                for (let i = 0; i < 5; i++) {
+            makeHearts() {
+                for (let i = 0; i < 6; i++) {
                     setTimeout(() => {
                         const heart = document.createElement('div');
-                        heart.className = 'floating-hearts';
-                        heart.textContent = ['💖', '💕', '💗', '💝'][Math.floor(Math.random() * 4)];
+                        heart.className = 'floating-stars';
+                        heart.textContent = ['💖', '💕', '💗', '💝', '❤️', '🧡'][Math.floor(Math.random() * 6)];
                         heart.style.left = Math.random() * window.innerWidth + 'px';
                         document.body.appendChild(heart);
                         
-                        setTimeout(() => heart.remove(), 3000);
-                    }, i * 200);
+                        setTimeout(() => heart.remove(), 4000);
+                    }, i * 150);
                 }
             }
             
-            createSparkles() {
+            makeStars() {
                 for (let i = 0; i < 8; i++) {
                     setTimeout(() => {
-                        const sparkle = document.createElement('div');
-                        sparkle.className = 'sparkles';
-                        sparkle.textContent = ['✨', '⭐', '🌟', '💫'][Math.floor(Math.random() * 4)];
-                        sparkle.style.left = Math.random() * window.innerWidth + 'px';
-                        sparkle.style.top = Math.random() * window.innerHeight + 'px';
-                        document.body.appendChild(sparkle);
+                        const star = document.createElement('div');
+                        star.className = 'sparkle-effect';
+                        star.textContent = ['⭐', '🌟', '✨', '💫', '🌈', '🎈'][Math.floor(Math.random() * 6)];
+                        star.style.left = Math.random() * window.innerWidth + 'px';
+                        star.style.top = Math.random() * window.innerHeight + 'px';
+                        document.body.appendChild(star);
                         
-                        setTimeout(() => sparkle.remove(), 2000);
-                    }, i * 100);
+                        setTimeout(() => star.remove(), 2000);
+                    }, i * 80);
                 }
             }
             
-            showMessage(text) {
-                const messageEl = document.getElementById('messageBubble');
-                messageEl.textContent = text;
-                messageEl.classList.add('show');
+            sayHello(text) {
+                const chatEl = document.getElementById('chatBubble');
+                chatEl.textContent = text;
+                chatEl.classList.add('show');
                 
                 setTimeout(() => {
-                    messageEl.classList.remove('show');
-                }, 3000);
-            }
-            
-            showNotification(text) {
-                const notificationEl = document.getElementById('notification');
-                notificationEl.textContent = text;
-                notificationEl.classList.add('show');
-                
-                setTimeout(() => {
-                    notificationEl.classList.remove('show');
+                    chatEl.classList.remove('show');
                 }, 4000);
             }
             
-            checkAchievements() {
-                this.achievements.forEach(achievement => {
-                    if (!achievement.unlocked) {
-                        let unlock = false;
+            showHappyNews(text) {
+                const newsEl = document.getElementById('notification');
+                newsEl.textContent = text;
+                newsEl.classList.add('show');
+                
+                setTimeout(() => {
+                    newsEl.classList.remove('show');
+                }, 5000);
+            }
+            
+            checkBadges() {
+                this.badges.forEach(badge => {
+                    if (!badge.earned) {
+                        let earn = false;
                         
-                        switch (achievement.id) {
-                            case 'first_pet':
-                                // This will be unlocked manually when first petting
+                        switch (badge.id) {
+                            case 'treat_giver':
+                                if ((badge.count || 0) >= 10) earn = true;
                                 break;
-                            case 'well_fed':
-                                if (this.stats.hunger > 80) unlock = true;
+                            case 'play_buddy':
+                                if ((badge.count || 0) >= 10) earn = true;
                                 break;
-                            case 'happy_camper':
-                                if (this.stats.happiness === 100) unlock = true;
+                            case 'super_star':
+                                if (this.level >= 3) earn = true;
                                 break;
-                            case 'level_5':
-                                if (this.level >= 5) unlock = true;
-                                break;
-                            case 'rich_owner':
-                                if (this.coins >= 1000) unlock = true;
+                            case 'heart_collector':
+                                if (this.hearts >= 100) earn = true;
                                 break;
                             case 'game_master':
-                                if (this.gamesCompleted >= 10) unlock = true;
+                                if ((badge.count || 0) >= 5) earn = true;
                                 break;
                         }
                         
-                        if (unlock) {
-                            achievement.unlocked = true;
-                            this.showNotification(`Achievement Unlocked: ${achievement.name}! 🏆`);
-                            this.coins += 50;
-                            this.renderAchievements();
+                        if (earn) {
+                            badge.earned = true;
+                            this.showHappyNews(`New Badge: ${badge.name}! 🏆`);
+                            this.hearts += 20;
+                            this.showBadges();
                         }
                     }
                 });
             }
             
-            updateDisplay() {
-                // Update pet appearance based on mood
+            updateEverything() {
+                // Update pet look based on mood
                 const petEl = document.getElementById('pet');
                 petEl.className = `pet ${this.mood}`;
                 
-                if (!this.isAlive) {
-                    petEl.style.filter = 'grayscale(100%)';
-                } else {
-                    petEl.style.filter = 'none';
-                }
-                
-                // Update stats
-                Object.keys(this.stats).forEach(stat => {
-                    const value = Math.round(this.stats[stat]);
-                    document.getElementById(`${stat}Value`).textContent = value;
-                    document.getElementById(`${stat}Bar`).style.width = value + '%';
+                // Update needs with colors
+                Object.keys(this.needs).forEach(need => {
+                    const value = Math.round(this.needs[need]);
+                    const displayName = need === 'happy' ? 'happy' : need;
+                    
+                    document.getElementById(`${displayName}Value`).textContent = value;
+                    document.getElementById(`${displayName}Bar`).style.width = value + '%';
+                    
+                    const card = document.getElementById(`${displayName}Card`);
+                    if (value > 70) {
+                        card.className = 'need-card happy';
+                    } else if (value > 40) {
+                        card.className = 'need-card okay';
+                    } else {
+                        card.className = 'need-card sad';
+                    }
                 });
                 
-                // Update level and XP
+                // Update level and stars
                 document.getElementById('level').textContent = this.level;
-                document.getElementById('xp').textContent = this.xp;
-                document.getElementById('xpFill').style.width = (this.xp / this.getXPRequired()) * 100 + '%';
+                document.getElementById('stars').textContent = this.stars;
+                document.getElementById('starFill').style.width = (this.stars / this.getStarsNeeded()) * 100 + '%';
                 
-                // Update coins
-                document.getElementById('coins').textContent = `💰 ${this.coins} coins`;
+                // Update hearts
+                document.getElementById('hearts').textContent = `❤️ ${this.hearts} hearts`;
                 
                 // Update pet info
                 document.getElementById('petName').textContent = this.name;
                 document.getElementById('pet').textContent = this.petType;
             }
             
-            renderAchievements() {
-                const container = document.getElementById('achievementsList');
+            showBadges() {
+                const container = document.getElementById('badgesList');
                 container.innerHTML = '';
                 
-                this.achievements.forEach(achievement => {
+                this.badges.forEach(badge => {
                     const div = document.createElement('div');
-                    div.className = `achievement ${achievement.unlocked ? 'unlocked' : ''}`;
+                    div.className = `star-badge ${badge.earned ? 'earned' : ''}`;
+                    
+                    let progressText = '';
+                    if (badge.count !== undefined && !badge.earned) {
+                        const target = badge.id === 'treat_giver' ? 10 : badge.id === 'play_buddy' ? 10 : 5;
+                        progressText = ` (${badge.count}/${target})`;
+                    }
+                    
                     div.innerHTML = `
-                        <div class="achievement-icon">${achievement.icon}</div>
-                        <div class="achievement-text">
-                            <strong>${achievement.name}</strong><br>
-                            ${achievement.description}
+                        <div class="star-icon">${badge.icon}</div>
+                        <div>
+                            <strong>${badge.name}</strong><br>
+                            <small>${badge.description}${progressText}</small>
                         </div>
                     `;
                     container.appendChild(div);
                 });
             }
             
-            renderShop() {
-                const container = document.getElementById('shopItems');
+            showTreats() {
+                const container = document.getElementById('treatShop');
                 container.innerHTML = '';
                 
-                this.shopItems.forEach(item => {
+                this.treats.forEach(treat => {
                     const div = document.createElement('div');
-                    div.className = `shop-item ${item.owned ? 'owned' : ''}`;
+                    div.className = `treat-item ${treat.owned ? 'bought' : ''}`;
                     div.innerHTML = `
                         <div>
-                            <span>${item.icon}</span>
-                            <strong>${item.name}</strong>
-                            <br><small>${item.price} coins</small>
+                            <span>${treat.icon}</span>
+                            <strong>${treat.name}</strong>
+                            <br><small>${treat.price} hearts</small>
                         </div>
-                        <button class="btn" onclick="pet.buyItem('${item.id}')" 
-                                ${item.owned || this.coins < item.price ? 'disabled' : ''}>
-                            ${item.owned ? 'Owned' : 'Buy'}
+                        <button class="care-btn" onclick="pet.buyTreat('${treat.id}')" 
+                                ${treat.owned || this.hearts < treat.price ? 'disabled' : ''}
+                                style="padding: 6px 10px; font-size: 11px;">
+                            ${treat.owned ? 'Got it!' : 'Buy'}
                         </button>
                     `;
                     container.appendChild(div);
                 });
             }
             
-            buyItem(itemId) {
-                const item = this.shopItems.find(i => i.id === itemId);
-                if (!item || item.owned || this.coins < item.price) return;
+            buyTreat(treatId) {
+                const treat = this.treats.find(t => t.id === treatId);
+                if (!treat || treat.owned || this.hearts < treat.price) return;
                 
-                this.coins -= item.price;
-                item.owned = true;
-                this.showNotification(`Purchased ${item.name}! 🛒`);
-                this.renderShop();
-                this.updateDisplay();
+                this.hearts -= treat.price;
+                treat.owned = true;
+                this.showHappyNews(`You got ${treat.name}! 🛍️`);
+                this.showTreats();
+                this.updateEverything();
             }
             
-            // Mini-game functions
-            openMemoryGame() {
-                this.currentMiniGame = 'memory';
-                this.setupMemoryGame();
-                document.getElementById('miniGameOverlay').style.display = 'flex';
+            // Simple games for kids
+            openMatchGame() {
+                this.currentGame = 'match';
+                this.setupMatchGame();
+                document.getElementById('gamePopup').style.display = 'flex';
             }
             
-            setupMemoryGame() {
-                const emojis = ['🐱', '🐶', '🐰', '🐸', '🐧', '🦊', '🐼', '🐨'];
-                const gameCards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+            setupMatchGame() {
+                const cuteEmojis = ['🐱', '🐶', '🐰', '🐸', '🦄', '🌈', '⭐', '🍎'];
+                const gameCards = [...cuteEmojis, ...cuteEmojis].sort(() => Math.random() - 0.5);
                 
                 const content = `
-                    <h2>🧠 Memory Game</h2>
-                    <p>Match all the pairs!</p>
-                    <div class="game-grid" id="memoryGrid"></div>
-                    <div>Score: <span id="memoryScore">0</span> | Moves: <span id="memoryMoves">0</span></div>
+                    <h2>🧩 Match the Friends!</h2>
+                    <p>Find the matching pairs!</p>
+                    <div class="simple-grid" id="matchGrid"></div>
+                    <div>Matches: <span id="matchScore">0</span>/8</div>
                 `;
                 
-                document.getElementById('miniGameContent').innerHTML = content;
+                document.getElementById('gameContent').innerHTML = content;
                 
-                const grid = document.getElementById('memoryGrid');
-                this.memoryCards = [];
+                const grid = document.getElementById('matchGrid');
+                this.matchCards = [];
                 this.flippedCards = [];
-                this.memoryScore = 0;
-                this.memoryMoves = 0;
+                this.matchScore = 0;
                 
                 gameCards.forEach((emoji, index) => {
                     const card = document.createElement('div');
-                    card.className = 'memory-card';
+                    card.className = 'game-card';
                     card.dataset.emoji = emoji;
                     card.dataset.index = index;
-                    card.onclick = () => this.flipCard(card);
+                    card.onclick = () => this.flipMatchCard(card);
                     grid.appendChild(card);
-                    this.memoryCards.push(card);
+                    this.matchCards.push(card);
                 });
             }
             
-            flipCard(card) {
-                if (this.flippedCards.length >= 2 || card.classList.contains('flipped')) return;
+            flipMatchCard(card) {
+                if (this.flippedCards.length >= 2 || card.classList.contains('found')) return;
                 
-                card.classList.add('flipped');
+                card.classList.add('found');
                 card.textContent = card.dataset.emoji;
                 this.flippedCards.push(card);
                 
                 if (this.flippedCards.length === 2) {
-                    this.memoryMoves++;
-                    document.getElementById('memoryMoves').textContent = this.memoryMoves;
-                    
                     setTimeout(() => {
                         if (this.flippedCards[0].dataset.emoji === this.flippedCards[1].dataset.emoji) {
-                            this.memoryScore++;
-                            document.getElementById('memoryScore').textContent = this.memoryScore;
+                            this.matchScore++;
+                            document.getElementById('matchScore').textContent = this.matchScore;
                             
-                            if (this.memoryScore === 8) {
-                                this.completeMemoryGame();
+                            if (this.matchScore === 8) {
+                                this.finishMatchGame();
                             }
                         } else {
                             this.flippedCards.forEach(card => {
-                                card.classList.remove('flipped');
+                                card.classList.remove('found');
                                 card.textContent = '';
                             });
                         }
@@ -1150,140 +1213,151 @@
                 }
             }
             
-            completeMemoryGame() {
-                const bonus = Math.max(50, 200 - this.memoryMoves * 10);
-                this.coins += bonus;
-                this.gainXP(25);
-                this.gamesCompleted++;
+            finishMatchGame() {
+                const bonus = 25;
+                this.hearts += bonus;
+                this.getStars(20);
+                this.gamesPlayed++;
+                
+                // Count for badge
+                const gameBadge = this.badges.find(b => b.id === 'game_master');
+                if (gameBadge && !gameBadge.earned) {
+                    gameBadge.count = (gameBadge.count || 0) + 1;
+                }
                 
                 setTimeout(() => {
-                    alert(`Memory Game Complete! 🎉\nMoves: ${this.memoryMoves}\nBonus: ${bonus} coins!`);
-                    this.closeMiniGame();
-                }, 500);
+                    alert(`Great job! You matched all the friends! 🎉\nYou earned ${bonus} hearts!`);
+                    this.closeGame();
+                }, 800);
             }
             
-            openFeedingGame() {
-                this.setupFeedingGame();
-                document.getElementById('miniGameOverlay').style.display = 'flex';
+            openCatchGame() {
+                this.setupCatchGame();
+                document.getElementById('gamePopup').style.display = 'flex';
             }
             
-            setupFeedingGame() {
+            setupCatchGame() {
                 const content = `
-                    <h2>🍕 Feeding Frenzy</h2>
-                    <p>Click the falling food to feed your pet!</p>
-                    <div style="position: relative; height: 300px; background: #f0f8ff; border-radius: 10px; overflow: hidden;" id="feedingArea">
-                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 40px;">🐱</div>
+                    <h2>🍓 Catch the Treats!</h2>
+                    <p>Click the falling treats!</p>
+                    <div style="position: relative; height: 250px; background: linear-gradient(135deg, #a8edea, #fed6e3); border-radius: 15px; overflow: hidden;" id="catchArea">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 35px;">🐱</div>
                     </div>
-                    <div>Score: <span id="feedingScore">0</span> | Time: <span id="feedingTime">30</span>s</div>
+                    <div>Treats Caught: <span id="catchScore">0</span> | Time: <span id="catchTime">20</span>s</div>
                 `;
                 
-                document.getElementById('miniGameContent').innerHTML = content;
+                document.getElementById('gameContent').innerHTML = content;
                 
-                this.feedingScore = 0;
-                this.feedingTime = 30;
-                this.feedingInterval = setInterval(() => this.createFallingFood(), 800);
-                this.feedingTimer = setInterval(() => this.updateFeedingTimer(), 1000);
+                this.catchScore = 0;
+                this.catchTime = 20;
+                this.catchInterval = setInterval(() => this.dropTreat(), 1200);
+                this.catchTimer = setInterval(() => this.updateCatchTimer(), 1000);
             }
             
-            createFallingFood() {
-                const foods = ['🍎', '🍕', '🍔', '🥕', '🍞', '🥛'];
-                const food = document.createElement('div');
-                food.textContent = foods[Math.floor(Math.random() * foods.length)];
-                food.style.position = 'absolute';
-                food.style.top = '0px';
-                food.style.left = Math.random() * 250 + 'px';
-                food.style.fontSize = '24px';
-                food.style.cursor = 'pointer';
-                food.onclick = () => this.catchFood(food);
+            dropTreat() {
+                const treats = ['🍎', '🍓', '🍊', '🍌', '🥕', '🍪'];
+                const treat = document.createElement('div');
+                treat.textContent = treats[Math.floor(Math.random() * treats.length)];
+                treat.style.position = 'absolute';
+                treat.style.top = '0px';
+                treat.style.left = Math.random() * 200 + 'px';
+                treat.style.fontSize = '22px';
+                treat.style.cursor = 'pointer';
+                treat.onclick = () => this.catchTreat(treat);
                 
-                const area = document.getElementById('feedingArea');
-                area.appendChild(food);
+                const area = document.getElementById('catchArea');
+                area.appendChild(treat);
                 
                 const fall = setInterval(() => {
-                    const currentTop = parseInt(food.style.top);
-                    if (currentTop > 270) {
+                    const currentTop = parseInt(treat.style.top);
+                    if (currentTop > 220) {
                         clearInterval(fall);
-                        food.remove();
+                        treat.remove();
                     } else {
-                        food.style.top = currentTop + 5 + 'px';
+                        treat.style.top = currentTop + 4 + 'px';
                     }
-                }, 50);
+                }, 60);
             }
             
-            catchFood(food) {
-                this.feedingScore += 10;
-                document.getElementById('feedingScore').textContent = this.feedingScore;
-                food.remove();
+            catchTreat(treat) {
+                this.catchScore++;
+                document.getElementById('catchScore').textContent = this.catchScore;
+                treat.remove();
                 
-                // Create catch effect
+                // Happy catch effect
                 const effect = document.createElement('div');
-                effect.textContent = '+10';
+                effect.textContent = '+1 ⭐';
                 effect.style.position = 'absolute';
                 effect.style.color = '#4ecdc4';
                 effect.style.fontWeight = 'bold';
-                effect.style.left = food.style.left;
-                effect.style.top = food.style.top;
+                effect.style.left = treat.style.left;
+                effect.style.top = treat.style.top;
                 effect.style.pointerEvents = 'none';
-                document.getElementById('feedingArea').appendChild(effect);
+                document.getElementById('catchArea').appendChild(effect);
                 
-                setTimeout(() => effect.remove(), 1000);
+                setTimeout(() => effect.remove(), 1500);
             }
             
-            updateFeedingTimer() {
-                this.feedingTime--;
-                document.getElementById('feedingTime').textContent = this.feedingTime;
+            updateCatchTimer() {
+                this.catchTime--;
+                document.getElementById('catchTime').textContent = this.catchTime;
                 
-                if (this.feedingTime <= 0) {
-                    this.completeFeedingGame();
+                if (this.catchTime <= 0) {
+                    this.finishCatchGame();
                 }
             }
             
-            completeFeedingGame() {
-                clearInterval(this.feedingInterval);
-                clearInterval(this.feedingTimer);
+            finishCatchGame() {
+                clearInterval(this.catchInterval);
+                clearInterval(this.catchTimer);
                 
-                const bonus = this.feedingScore * 2;
-                this.coins += bonus;
-                this.gainXP(20);
-                this.gamesCompleted++;
+                const bonus = this.catchScore * 3;
+                this.hearts += bonus;
+                this.getStars(15);
+                this.gamesPlayed++;
+                
+                // Count for badge
+                const gameBadge = this.badges.find(b => b.id === 'game_master');
+                if (gameBadge && !gameBadge.earned) {
+                    gameBadge.count = (gameBadge.count || 0) + 1;
+                }
                 
                 setTimeout(() => {
-                    alert(`Feeding Frenzy Complete! 🎉\nScore: ${this.feedingScore}\nBonus: ${bonus} coins!`);
-                    this.closeMiniGame();
-                }, 500);
+                    alert(`Awesome! You caught ${this.catchScore} treats! 🎉\nYou earned ${bonus} hearts!`);
+                    this.closeGame();
+                }, 800);
             }
             
             openColorGame() {
                 this.setupColorGame();
-                document.getElementById('miniGameOverlay').style.display = 'flex';
+                document.getElementById('gamePopup').style.display = 'flex';
             }
             
             setupColorGame() {
-                const colors = ['🔴', '🟡', '🟢', '🔵', '🟣', '🟠'];
+                const colors = ['🔴', '💛', '💚', '💙', '💜', '🧡'];
                 this.targetColor = colors[Math.floor(Math.random() * colors.length)];
                 this.colorScore = 0;
                 this.colorRound = 1;
-                this.maxRounds = 10;
+                this.maxRounds = 8;
                 
                 const content = `
-                    <h2>🌈 Color Match</h2>
-                    <p>Click the <strong>${this.targetColor}</strong> circles!</p>
-                    <div style="margin: 20px 0;">Round: <span id="colorRound">1</span>/10 | Score: <span id="colorScore">0</span></div>
-                    <div id="colorGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 300px; margin: 0 auto;"></div>
+                    <h2>🌈 Find the Color!</h2>
+                    <p>Click the <big><strong>${this.targetColor}</strong></big> circles!</p>
+                    <div style="margin: 15px 0;">Round: <span id="colorRound">1</span>/8 | Score: <span id="colorScore">0</span></div>
+                    <div id="colorGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 250px; margin: 0 auto;"></div>
                 `;
                 
-                document.getElementById('miniGameContent').innerHTML = content;
-                this.generateColorRound();
+                document.getElementById('gameContent').innerHTML = content;
+                this.makeColorRound();
             }
             
-            generateColorRound() {
-                const colors = ['🔴', '🟡', '🟢', '🔵', '🟣', '🟠'];
+            makeColorRound() {
+                const colors = ['🔴', '💛', '💚', '💙', '💜', '🧡'];
                 const grid = document.getElementById('colorGrid');
                 grid.innerHTML = '';
                 
-                // Generate 9 circles with random colors, ensuring at least one target color
                 const circles = [];
-                circles.push(this.targetColor); // Ensure at least one target
+                circles.push(this.targetColor);
                 
                 for (let i = 1; i < 9; i++) {
                     circles.push(colors[Math.floor(Math.random() * colors.length)]);
@@ -1294,124 +1368,116 @@
                 circles.forEach(color => {
                     const circle = document.createElement('div');
                     circle.textContent = color;
-                    circle.style.fontSize = '40px';
+                    circle.style.fontSize = '35px';
                     circle.style.cursor = 'pointer';
                     circle.style.textAlign = 'center';
-                    circle.style.padding = '20px';
+                    circle.style.padding = '15px';
                     circle.style.borderRadius = '50%';
-                    circle.style.background = 'rgba(255,255,255,0.1)';
+                    circle.style.background = 'rgba(255,255,255,0.2)';
+                    circle.style.border = '2px solid white';
                     circle.onclick = () => this.clickColor(color, circle);
                     grid.appendChild(circle);
                 });
                 
-                // Update display
                 document.getElementById('colorRound').textContent = this.colorRound;
                 document.getElementById('colorScore').textContent = this.colorScore;
             }
             
             clickColor(color, element) {
                 if (color === this.targetColor) {
-                    this.colorScore += 10;
+                    this.colorScore++;
                     element.style.background = '#4ecdc4';
+                    element.style.transform = 'scale(1.2)';
                     
                     setTimeout(() => {
                         this.colorRound++;
                         if (this.colorRound > this.maxRounds) {
-                            this.completeColorGame();
+                            this.finishColorGame();
                         } else {
-                            // Generate new target color
-                            const colors = ['🔴', '🟡', '🟢', '🔵', '🟣', '🟠'];
+                            const colors = ['🔴', '💛', '💚', '💙', '💜', '🧡'];
                             this.targetColor = colors[Math.floor(Math.random() * colors.length)];
-                            document.querySelector('#miniGameContent p').innerHTML = `Click the <strong>${this.targetColor}</strong> circles!`;
-                            this.generateColorRound();
+                            document.querySelector('#gameContent p').innerHTML = `Click the <big><strong>${this.targetColor}</strong></big> circles!`;
+                            this.makeColorRound();
                         }
-                    }, 500);
+                    }, 600);
                 } else {
-                    element.style.background = '#e74c3c';
+                    element.style.background = '#ff6b9d';
+                    element.style.transform = 'scale(0.8)';
                     setTimeout(() => {
-                        element.style.background = 'rgba(255,255,255,0.1)';
-                    }, 300);
+                        element.style.background = 'rgba(255,255,255,0.2)';
+                        element.style.transform = 'scale(1)';
+                    }, 400);
                 }
             }
             
-            completeColorGame() {
-                const bonus = this.colorScore * 3;
-                this.coins += bonus;
-                this.gainXP(30);
-                this.gamesCompleted++;
+            finishColorGame() {
+                const bonus = this.colorScore * 4;
+                this.hearts += bonus;
+                this.getStars(18);
+                this.gamesPlayed++;
+                
+                // Count for badge
+                const gameBadge = this.badges.find(b => b.id === 'game_master');
+                if (gameBadge && !gameBadge.earned) {
+                    gameBadge.count = (gameBadge.count || 0) + 1;
+                }
                 
                 setTimeout(() => {
-                    alert(`Color Match Complete! 🎉\nScore: ${this.colorScore}\nBonus: ${bonus} coins!`);
-                    this.closeMiniGame();
-                }, 500);
+                    alert(`Perfect! You found all the colors! 🌈\nYou earned ${bonus} hearts!`);
+                    this.closeGame();
+                }, 800);
             }
             
-            closeMiniGame() {
-                document.getElementById('miniGameOverlay').style.display = 'none';
+            closeGame() {
+                document.getElementById('gamePopup').style.display = 'none';
                 
-                // Clear any intervals
-                if (this.feedingInterval) clearInterval(this.feedingInterval);
-                if (this.feedingTimer) clearInterval(this.feedingTimer);
+                if (this.catchInterval) clearInterval(this.catchInterval);
+                if (this.catchTimer) clearInterval(this.catchTimer);
                 
-                this.updateDisplay();
+                this.updateEverything();
             }
             
-            resetPet() {
-                this.stats = { hunger: 100, happiness: 100, health: 100, energy: 100 };
+            newPet() {
+                this.needs = { hunger: 100, happy: 100, health: 100, energy: 100 };
                 this.level = 1;
-                this.xp = 0;
-                this.coins = 0;
+                this.stars = 0;
+                this.hearts = 0;
                 this.age = 0;
                 this.isAlive = true;
-                this.mood = 'happy';
+                this.mood = 'super-happy';
                 this.birthTime = Date.now();
-                this.gamesCompleted = 0;
+                this.gamesPlayed = 0;
                 
-                // Reset achievements
-                this.achievements.forEach(a => a.unlocked = false);
+                this.badges.forEach(b => { b.earned = false; b.count = 0; });
+                this.treats.forEach(t => t.owned = false);
                 
-                // Reset shop
-                this.shopItems.forEach(item => item.owned = false);
-                
-                // Random pet
                 this.petType = this.petTypes[Math.floor(Math.random() * this.petTypes.length)];
                 this.name = this.names[Math.floor(Math.random() * this.names.length)];
                 
-                this.showMessage(`Meet ${this.name}! Your new adventure begins! 🌟`);
-                this.renderAchievements();
-                this.renderShop();
-                this.updateDisplay();
+                this.sayHello(`Hi! I'm ${this.name}! Let's be best friends! 🌟`);
+                this.showBadges();
+                this.showTreats();
+                this.updateEverything();
             }
         }
 
-        // Global pet instance
-        let pet = new UltimateVirtualPet();
+        // Create the pet
+        let pet = new KidFriendlyPet();
 
-        // Global functions for buttons
-        function feedPet() { pet.feedPet(); }
-        function playWithPet() { pet.playWithPet(); }
-        function cleanPet() { pet.cleanPet(); }
-        function sleepPet() { pet.sleepPet(); }
-        function petPet() { pet.petPet(); }
-        function petClick() { 
-            pet.petClick(); 
-            // Unlock first pet achievement
-            const firstPetAchievement = pet.achievements.find(a => a.id === 'first_pet');
-            if (firstPetAchievement && !firstPetAchievement.unlocked) {
-                firstPetAchievement.unlocked = true;
-                pet.showNotification('Achievement Unlocked: First Pet! 🏆');
-                pet.coins += 50;
-                pet.renderAchievements();
-            }
-        }
-        function toggleWeather() { pet.toggleWeather(); }
-        function openMemoryGame() { pet.openMemoryGame(); }
-        function openFeedingGame() { pet.openFeedingGame(); }
+        // Button functions
+        function giveTreat() { pet.giveTreat(); }
+        function playTogether() { pet.playTogether(); }
+        function giveBath() { pet.giveBath(); }
+        function napTime() { pet.napTime(); }
+        function hugPet() { pet.hugPet(); }
+        function makeSurprise() { pet.makeSurprise(); }
+        function openMatchGame() { pet.openMatchGame(); }
+        function openCatchGame() { pet.openCatchGame(); }
         function openColorGame() { pet.openColorGame(); }
-        function closeMiniGame() { pet.closeMiniGame(); }
-        function resetPet() { 
-            if (confirm('Are you sure you want to start over with a new pet?')) {
-                pet.resetPet(); 
+        function closeGame() { pet.closeGame(); }
+        function newPet() { 
+            if (confirm('Do you want to get a new pet friend?')) {
+                pet.newPet(); 
             }
         }
     </script>
