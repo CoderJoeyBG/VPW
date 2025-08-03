@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Virtual Pet - Interactive Experience</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Comic+Neue:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #f0932b, #eb4d4b, #6c5ce7);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .floating-hearts {
+            position: fixed;
+            top: -50px;
+            pointer-events: none;
+            z-index: 1000;
+            font-size: 20px;
+            color: #ff6b9d;
+            animation: floatUp 3s linear forwards;
+        }
+
+        @keyframes floatUp {
+            to {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .sparkles {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            font-size: 16px;
+            animation: sparkle 2s ease-out forwards;
+        }
+
+        @keyframes sparkle {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 0.8; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        .game-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            position: relative;
+        }
+
+        .main-screen {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            border: 3px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pet-area {
+            text-align: center;
+            position: relative;
+            min-height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .weather-system {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .rain {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: #87ceeb;
+            animation: rain 1s linear infinite;
+        }
+
+        @keyframes rain {
+            from { transform: translateY(-20px); }
+            to { transform: translateY(400px); }
+        }
+
+        .snow {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: snow 3s linear infinite;
+        }
+
+        @keyframes snow {
+            from { transform: translateY(-10px) rotate(0deg); }
+            to { transform: translateY(400px) rotate(360deg); }
+        }
+
+        .pet {
+            font-size: 120px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            z-index: 10;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+        }
+
+        .pet:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .pet.happy {
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        .pet.sad {
+            animation: shake 0.5s ease-in-out;
+            filter: grayscale(30%);
+        }
+
+        .pet.sleeping {
+            animation: sleep 2s ease-in-out infinite;
+            opacity: 0.8;
+        }
+
+        .pet.sick {
+            animation: sick 1s ease-in-out infinite;
+            filter: hue-rotate(120deg);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes sleep {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes sick {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-2deg); }
+            75% { transform: rotate(2deg); }
+        }
+
+        .pet-name {
+            font-family: 'Fredoka One', cursive;
+            font-size: 32px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .level-system {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .xp-bar {
+            width: 200px;
+            height: 10px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            transition: width 0.5s ease;
+            border-radius: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .stat-name {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: all 0.5s ease;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .mini-game-panel, .achievements-panel, .shop-panel {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .panel-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .mini-game-btn {
+            width: 100%;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .achievement {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .achievement.unlocked {
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            color: white;
+            border-left-color: #fff;
+        }
+
+        .achievement-icon {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+
+        .achievement-text {
+            font-size: 12px;
+            flex: 1;
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .shop-item.owned {
+            background: #d4edda;
+        }
+
+        .coins-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,215,0,0.9);
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .message-bubble {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            padding: 15px 20px;
+            border-radius: 20px;
+            max-width: 250px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .message-bubble.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        .message-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid rgba(255,255,255,0.95);
+        }
+
+        .mini-game-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .mini-game-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+
+        .memory-card.flipped {
+            background: #4ecdc4;
+            transform: rotateY(180deg);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4ecdc4;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+            
+            .controls {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="main-screen">
+            <div class="coins-display" id="coins">💰 0 coins</div>
+            <div class="level-system">
+                <div>Level <span id="level">1</span></div>
+                <div class="xp-bar">
+                    <div class="xp-fill" id="xpFill"></div>
+                </div>
+                <div><span id="xp">0</span>/100 XP</div>
+            </div>
+            
+            <div class="pet-area" id="petArea">
+                <div class="weather-system" id="weather"></div>
+                <div class="message-bubble" id="messageBubble"></div>
+                <div class="pet-name" id="petName">Buddy</div>
+                <div class="pet" id="pet" onclick="petClick()">🐱</div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🍎</div>
+                    <div class="stat-name">Hunger</div>
+                    <div class="stat-value" id="hungerValue">100</div>
+                    <div class="stat-bar">
+                        <div class="stat-fill" id="hungerBar" style="background: #e74c3c;"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">😊</div>
+                    <div class="stat-name">Happiness</div>
+                    <div class="stat-value" id="happinessValue">100</div>
+                    <div class="stat-bar">
+                        <div class="stat-fill" id="happinessBar" style="background: #f39c12;"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">❤️</div>
+                    <div class="stat-name">Health</div>
+                    <div class="stat-value" id="healthValue">100</div>
+                    <div class="stat-bar">
+                        <div class="stat-fill" id="healthBar" style="background: #27ae60;"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-name">Energy</div>
+                    <div class="stat-value" id="energyValue">100</div>
+                    <div class="stat-bar">
+                        <div class="stat-fill" id="energyBar" style="background: #3498db;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn" onclick="feedPet()">🍎 Feed</button>
+                <button class="btn" onclick="playWithPet()">🎾 Play</button>
+                <button class="btn" onclick="cleanPet()">🛁 Clean</button>
+                <button class="btn" onclick="sleepPet()">😴 Sleep</button>
+                <button class="btn" onclick="petPet()">💕 Pet</button>
+                <button class="btn" onclick="toggleWeather()">🌦️ Weather</button>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="mini-game-panel">
+                <div class="panel-title">🎮 Mini Games</div>
+                <button class="btn mini-game-btn" onclick="openMemoryGame()">🧠 Memory Game</button>
+                <button class="btn mini-game-btn" onclick="openFeedingGame()">🍕 Feeding Frenzy</button>
+                <button class="btn mini-game-btn" onclick="openColorGame()">🌈 Color Match</button>
+            </div>
+            
+            <div class="achievements-panel">
+                <div class="panel-title">🏆 Achievements</div>
+                <div id="achievementsList"></div>
+            </div>
+            
+            <div class="shop-panel">
+                <div class="panel-title">🛒 Pet Shop</div>
+                <div id="shopItems"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mini-game-overlay" id="miniGameOverlay">
+        <div class="mini-game-content">
+            <button class="close-btn" onclick="closeMiniGame()">×</button>
+            <div id="miniGameContent"></div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+
+    <script>
+        class UltimateVirtualPet {
+            constructor() {
+                this.stats = {
+                    hunger: 100,
+                    happiness: 100,
+                    health: 100,
+                    energy: 100
+                };
+                
+                this.level = 1;
+                this.xp = 0;
+                this.coins = 0;
+                this.age = 0;
+                this.name = 'Buddy';
+                this.petType = '🐱';
+                this.isAlive = true;
+                this.mood = 'happy';
+                this.weatherType = 'sunny';
+                
+                this.petTypes = ['🐱', '🐶', '🐰', '🐸', '🐧', '🦊', '🐼', '🐨', '🐯', '🦁'];
+                this.names = ['Buddy', 'Luna', 'Max', 'Bella', 'Charlie', 'Lucy', 'Rocky', 'Daisy', 'Milo', 'Coco'];
+                this.weatherTypes = ['sunny', 'rainy', 'snowy', 'cloudy'];
+                
+                this.achievements = [
+                    { id: 'first_pet', name: 'First Pet', description: 'Pet your companion for the first time', unlocked: false, icon: '👋' },
+                    { id: 'well_fed', name: 'Well Fed', description: 'Keep hunger above 80 for 5 minutes', unlocked: false, icon: '🍽️' },
+                    { id: 'happy_camper', name: 'Happy Camper', description: 'Keep happiness at 100 for 3 minutes', unlocked: false, icon: '😄' },
+                    { id: 'level_5', name: 'Growing Up', description: 'Reach level 5', unlocked: false, icon: '📈' },
+                    { id: 'rich_owner', name: 'Rich Owner', description: 'Collect 1000 coins', unlocked: false, icon: '💰' },
+                    { id: 'game_master', name: 'Game Master', description: 'Complete 10 mini-games', unlocked: false, icon: '🎮' }
+                ];
+                
+                this.shopItems = [
+                    { id: 'food_upgrade', name: 'Premium Food', price: 100, owned: false, icon: '🥩' },
+                    { id: 'toy_upgrade', name: 'Super Toy', price: 150, owned: false, icon: '🧸' },
+                    { id: 'health_potion', name: 'Health Potion', price: 200, owned: false, icon: '🧪' },
+                    { id: 'energy_drink', name: 'Energy Drink', price: 75, owned: false, icon: '⚡' }
+                ];
+                
+                this.gamesCompleted = 0;
+                this.lastUpdate = Date.now();
+                this.birthTime = Date.now();
+                
+                this.initializeGame();
+            }
+            
+            initializeGame() {
+                this.startGameLoop();
+                this.updateDisplay();
+                this.renderAchievements();
+                this.renderShop();
+                this.showMessage("Welcome! Take great care of your new pet! 🎉");
+                this.changeWeather();
+                
+                // Start weather cycle
+                setInterval(() => this.changeWeather(), 30000);
+            }
+            
+            startGameLoop() {
+                setInterval(() => {
+                    if (this.isAlive) {
+                        this.updateStats();
+                        this.updateAge();
+                        this.updateMood();
+                        this.updateDisplay();
+                        this.checkAchievements();
+                        this.earnPassiveCoins();
+                    }
+                }, 2000);
+            }
+            
+            updateStats() {
+                // Natural decay
+                this.stats.hunger = Math.max(0, this.stats.hunger - (Math.random() * 1.5 + 0.5));
+                this.stats.happiness = Math.max(0, this.stats.happiness - (Math.random() * 1 + 0.3));
+                this.stats.energy = Math.max(0, this.stats.energy - (Math.random() * 1.2 + 0.4));
+                
+                // Health depends on other stats
+                if (this.stats.hunger < 20 || this.stats.happiness < 20 || this.stats.energy < 15) {
+                    this.stats.health = Math.max(0, this.stats.health - (Math.random() * 2 + 0.5));
+                } else if (this.stats.hunger > 70 && this.stats.happiness > 70 && this.stats.energy > 50) {
+                    this.stats.health = Math.min(100, this.stats.health + (Math.random() * 0.5 + 0.2));
+                }
+                
+                // Check if pet dies
+                if (this.stats.health <= 0) {
+                    this.isAlive = false;
+                    this.mood = 'dead';
+                    this.showMessage("💔 Your pet has passed away... They had a good life!");
+                }
+            }
+            
+            updateAge() {
+                const minutesPassed = Math.floor((Date.now() - this.birthTime) / 60000);
+                this.age = minutesPassed;
+            }
+            
+            updateMood() {
+                const avgStat = (this.stats.hunger + this.stats.happiness + this.stats.health + this.stats.energy) / 4;
+                
+                if (!this.isAlive) {
+                    this.mood = 'dead';
+                } else if (this.stats.energy < 20) {
+                    this.mood = 'sleeping';
+                } else if (this.stats.health < 30) {
+                    this.mood = 'sick';
+                } else if (avgStat > 80) {
+                    this.mood = 'happy';
+                } else if (avgStat > 40) {
+                    this.mood = 'neutral';
+                } else {
+                    this.mood = 'sad';
+                }
+            }
+            
+            earnPassiveCoins() {
+                if (this.isAlive && Math.random() < 0.1) {
+                    this.coins += Math.floor(Math.random() * 3) + 1;
+                }
+            }
+            
+            feedPet() {
+                if (!this.isAlive) return;
+                
+                const bonus = this.shopItems.find(item => item.id === 'food_upgrade' && item.owned) ? 1.5 : 1;
+                
+                this.stats.hunger = Math.min(100, this.stats.hunger + (25 * bonus));
+                this.stats.happiness = Math.min(100, this.stats.happiness + 5);
+                this.stats.energy = Math.min(100, this.stats.energy + 10);
+                
+                this.gainXP(10);
+                this.coins += 2;
+                this.showMessage(bonus > 1 ? "Premium food is delicious! 🥩✨" : "Yummy! Thanks for the food! 😋");
+                this.createHearts();
+                this.updateDisplay();
+            }
+            
+            playWithPet() {
+                if (!this.isAlive) return;
+                
+                if (this.stats.energy < 15) {
+                    this.showMessage("I'm too tired to play! 😴");
+                    return;
+                }
+                
+                const bonus = this.shopItems.find(item => item.id === 'toy_upgrade' && item.owned) ? 1.5 : 1;
+                
+                this.stats.happiness = Math.min(100, this.stats.happiness + (20 * bonus));
+                this.stats.energy = Math.max(0, this.stats.energy - 10);
+                this.stats.hunger = Math.max(0, this.stats.hunger - 5);
+                
+                this.gainXP(15);
+                this.coins += 3;
+                this.showMessage(bonus > 1 ? "This super toy is amazing! 🧸⭐" : "That was so much fun! 🎉");
+                this.createSparkles();
+                this.updateDisplay();
+            }
+            
+            cleanPet() {
+                if (!this.isAlive) return;
+                
+                this.stats.health = Math.min(100, this.stats.health + 20);
+                this.stats.happiness = Math.min(100, this.stats.happiness + 10);
+                
+                this.gainXP(8);
+                this.coins += 2;
+                this.showMessage("Ahh, so fresh and clean! ✨");
+                this.createSparkles();
+                this.updateDisplay();
+            }
+            
+            sleepPet() {
+                if (!this.isAlive) return;
+                
+                const bonus = this.shopItems.find(item => item.id === 'energy_drink' && item.owned) ? 1.3 : 1;
+                
+                this.stats.energy = Math.min(100, this.stats.energy + (35 * bonus));
+                this.stats.health = Math.min(100, this.stats.health + 15);
+                this.stats.hunger = Math.max(0, this.stats.hunger - 3);
+                
+                this.gainXP(12);
+                this.showMessage(bonus > 1 ? "Super energized nap! ⚡💤" : "Zzz... That was refreshing! 💤");
+                this.updateDisplay();
+            }
+            
+            petPet() {
+                if (!this.isAlive) return;
+                
+                this.stats.happiness = Math.min(100, this.stats.happiness + 8);
+                this.gainXP(5);
+                this.coins += 1;
+                
+                const messages = [
+                    "That feels nice! 🥰",
+                    "I love you too! 💕",
+                    "More pets please! 😊",
+                    "You're the best! 🌟"
+                ];
+                
+                this.showMessage(messages[Math.floor(Math.random() * messages.length)]);
+                this.createHearts();
+                this.updateDisplay();
+            }
+            
+            petClick() {
+                this.petPet();
+                
+                // Special pet animation
+                const petElement = document.getElementById('pet');
+                petElement.classList.add('happy');
+                setTimeout(() => {
+                    petElement.classList.remove('happy');
+                }, 600);
+            }
+            
+            toggleWeather() {
+                const currentIndex = this.weatherTypes.indexOf(this.weatherType);
+                const nextIndex = (currentIndex + 1) % this.weatherTypes.length;
+                this.weatherType = this.weatherTypes[nextIndex];
+                this.changeWeather();
+                
+                this.showMessage(`Weather changed to ${this.weatherType}! 🌦️`);
+                this.gainXP(3);
+            }
+            
+            changeWeather() {
+                const weatherEl = document.getElementById('weather');
+                weatherEl.innerHTML = '';
+                
+                if (this.weatherType === 'rainy') {
+                    for (let i = 0; i < 50; i++) {
+                        const rain = document.createElement('div');
+                        rain.className = 'rain';
+                        rain.style.left = Math.random() * 100 + '%';
+                        rain.style.animationDelay = Math.random() * 2 + 's';
+                        weatherEl.appendChild(rain);
+                    }
+                } else if (this.weatherType === 'snowy') {
+                    for (let i = 0; i < 30; i++) {
+                        const snow = document.createElement('div');
+                        snow.className = 'snow';
+                        snow.style.left = Math.random() * 100 + '%';
+                        snow.style.animationDelay = Math.random() * 3 + 's';
+                        weatherEl.appendChild(snow);
+                    }
+                }
+                
+                // Change background based on weather
+                const petArea = document.getElementById('petArea');
+                switch (this.weatherType) {
+                    case 'sunny':
+                        petArea.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                        break;
+                    case 'rainy':
+                        petArea.style.background = 'linear-gradient(135deg, #4a6cf7 0%, #667eea 100%)';
+                        break;
+                    case 'snowy':
+                        petArea.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
+                        break;
+                    case 'cloudy':
+                        petArea.style.background = 'linear-gradient(135deg, #9fa4c4 0%, #a8a8a8 100%)';
+                        break;
+                }
+            }
+            
+            gainXP(amount) {
+                this.xp += amount;
+                
+                while (this.xp >= this.getXPRequired()) {
+                    this.xp -= this.getXPRequired();
+                    this.level++;
+                    this.showNotification(`Level Up! Now level ${this.level}! 🎉`);
+                    this.coins += this.level * 10;
+                    this.createSparkles();
+                }
+            }
+            
+            getXPRequired() {
+                return 100 + (this.level - 1) * 50;
+            }
+            
+            createHearts() {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const heart = document.createElement('div');
+                        heart.className = 'floating-hearts';
+                        heart.textContent = ['💖', '💕', '💗', '💝'][Math.floor(Math.random() * 4)];
+                        heart.style.left = Math.random() * window.innerWidth + 'px';
+                        document.body.appendChild(heart);
+                        
+                        setTimeout(() => heart.remove(), 3000);
+                    }, i * 200);
+                }
+            }
+            
+            createSparkles() {
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                        const sparkle = document.createElement('div');
+                        sparkle.className = 'sparkles';
+                        sparkle.textContent = ['✨', '⭐', '🌟', '💫'][Math.floor(Math.random() * 4)];
+                        sparkle.style.left = Math.random() * window.innerWidth + 'px';
+                        sparkle.style.top = Math.random() * window.innerHeight + 'px';
+                        document.body.appendChild(sparkle);
+                        
+                        setTimeout(() => sparkle.remove(), 2000);
+                    }, i * 100);
+                }
+            }
+            
+            showMessage(text) {
+                const messageEl = document.getElementById('messageBubble');
+                messageEl.textContent = text;
+                messageEl.classList.add('show');
+                
+                setTimeout(() => {
+                    messageEl.classList.remove('show');
+                }, 3000);
+            }
+            
+            showNotification(text) {
+                const notificationEl = document.getElementById('notification');
+                notificationEl.textContent = text;
+                notificationEl.classList.add('show');
+                
+                setTimeout(() => {
+                    notificationEl.classList.remove('show');
+                }, 4000);
+            }
+            
+            checkAchievements() {
+                this.achievements.forEach(achievement => {
+                    if (!achievement.unlocked) {
+                        let unlock = false;
+                        
+                        switch (achievement.id) {
+                            case 'first_pet':
+                                // This will be unlocked manually when first petting
+                                break;
+                            case 'well_fed':
+                                if (this.stats.hunger > 80) unlock = true;
+                                break;
+                            case 'happy_camper':
+                                if (this.stats.happiness === 100) unlock = true;
+                                break;
+                            case 'level_5':
+                                if (this.level >= 5) unlock = true;
+                                break;
+                            case 'rich_owner':
+                                if (this.coins >= 1000) unlock = true;
+                                break;
+                            case 'game_master':
+                                if (this.gamesCompleted >= 10) unlock = true;
+                                break;
+                        }
+                        
+                        if (unlock) {
+                            achievement.unlocked = true;
+                            this.showNotification(`Achievement Unlocked: ${achievement.name}! 🏆`);
+                            this.coins += 50;
+                            this.renderAchievements();
+                        }
+                    }
+                });
+            }
+            
+            updateDisplay() {
+                // Update pet appearance based on mood
+                const petEl = document.getElementById('pet');
+                petEl.className = `pet ${this.mood}`;
+                
+                if (!this.isAlive) {
+                    petEl.style.filter = 'grayscale(100%)';
+                } else {
+                    petEl.style.filter = 'none';
+                }
+                
+                // Update stats
+                Object.keys(this.stats).forEach(stat => {
+                    const value = Math.round(this.stats[stat]);
+                    document.getElementById(`${stat}Value`).textContent = value;
+                    document.getElementById(`${stat}Bar`).style.width = value + '%';
+                });
+                
+                // Update level and XP
+                document.getElementById('level').textContent = this.level;
+                document.getElementById('xp').textContent = this.xp;
+                document.getElementById('xpFill').style.width = (this.xp / this.getXPRequired()) * 100 + '%';
+                
+                // Update coins
+                document.getElementById('coins').textContent = `💰 ${this.coins} coins`;
+                
+                // Update pet info
+                document.getElementById('petName').textContent = this.name;
+                document.getElementById('pet').textContent = this.petType;
+            }
+            
+            renderAchievements() {
+                const container = document.getElementById('achievementsList');
+                container.innerHTML = '';
+                
+                this.achievements.forEach(achievement => {
+                    const div = document.createElement('div');
+                    div.className = `achievement ${achievement.unlocked ? 'unlocked' : ''}`;
+                    div.innerHTML = `
+                        <div class="achievement-icon">${achievement.icon}</div>
+                        <div class="achievement-text">
+                            <strong>${achievement.name}</strong><br>
+                            ${achievement.description}
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+            
+            renderShop() {
+                const container = document.getElementById('shopItems');
+                container.innerHTML = '';
+                
+                this.shopItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = `shop-item ${item.owned ? 'owned' : ''}`;
+                    div.innerHTML = `
+                        <div>
+                            <span>${item.icon}</span>
+                            <strong>${item.name}</strong>
+                            <br><small>${item.price} coins</small>
+                        </div>
+                        <button class="btn" onclick="pet.buyItem('${item.id}')" 
+                                ${item.owned || this.coins < item.price ? 'disabled' : ''}>
+                            ${item.owned ? 'Owned' : 'Buy'}
+                        </button>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+            
+            buyItem(itemId) {
+                const item = this.shopItems.find(i => i.id === itemId);
+                if (!item || item.owned || this.coins < item.price) return;
+                
+                this.coins -= item.price;
+                item.owned = true;
+                this.showNotification(`Purchased ${item.name}! 🛒`);
+                this.renderShop();
+                this.updateDisplay();
+            }
+            
+            // Mini-game functions
+            openMemoryGame() {
+                this.currentMiniGame = 'memory';
+                this.setupMemoryGame();
+                document.getElementById('miniGameOverlay').style.display = 'flex';
+            }
+            
+            setupMemoryGame() {
+                const emojis = ['🐱', '🐶', '🐰', '🐸', '🐧', '🦊', '🐼', '🐨'];
+                const gameCards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+                
+                const content = `
+                    <h2>🧠 Memory Game</h2>
+                    <p>Match all the pairs!</p>
+                    <div class="game-grid" id="memoryGrid"></div>
+                    <div>Score: <span id="memoryScore">0</span> | Moves: <span id="memoryMoves">0</span></div>
+                `;
+                
+                document.getElementById('miniGameContent').innerHTML = content;
+                
+                const grid = document.getElementById('memoryGrid');
+                this.memoryCards = [];
+                this.flippedCards = [];
+                this.memoryScore = 0;
+                this.memoryMoves = 0;
+                
+                gameCards.forEach((emoji, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'memory-card';
+                    card.dataset.emoji = emoji;
+                    card.dataset.index = index;
+                    card.onclick = () => this.flipCard(card);
+                    grid.appendChild(card);
+                    this.memoryCards.push(card);
+                });
+            }
+            
+            flipCard(card) {
+                if (this.flippedCards.length >= 2 || card.classList.contains('flipped')) return;
+                
+                card.classList.add('flipped');
+                card.textContent = card.dataset.emoji;
+                this.flippedCards.push(card);
+                
+                if (this.flippedCards.length === 2) {
+                    this.memoryMoves++;
+                    document.getElementById('memoryMoves').textContent = this.memoryMoves;
+                    
+                    setTimeout(() => {
+                        if (this.flippedCards[0].dataset.emoji === this.flippedCards[1].dataset.emoji) {
+                            this.memoryScore++;
+                            document.getElementById('memoryScore').textContent = this.memoryScore;
+                            
+                            if (this.memoryScore === 8) {
+                                this.completeMemoryGame();
+                            }
+                        } else {
+                            this.flippedCards.forEach(card => {
+                                card.classList.remove('flipped');
+                                card.textContent = '';
+                            });
+                        }
+                        this.flippedCards = [];
+                    }, 1000);
+                }
+            }
+            
+            completeMemoryGame() {
+                const bonus = Math.max(50, 200 - this.memoryMoves * 10);
+                this.coins += bonus;
+                this.gainXP(25);
+                this.gamesCompleted++;
+                
+                setTimeout(() => {
+                    alert(`Memory Game Complete! 🎉\nMoves: ${this.memoryMoves}\nBonus: ${bonus} coins!`);
+                    this.closeMiniGame();
+                }, 500);
+            }
+            
+            openFeedingGame() {
+                this.setupFeedingGame();
+                document.getElementById('miniGameOverlay').style.display = 'flex';
+            }
+            
+            setupFeedingGame() {
+                const content = `
+                    <h2>🍕 Feeding Frenzy</h2>
+                    <p>Click the falling food to feed your pet!</p>
+                    <div style="position: relative; height: 300px; background: #f0f8ff; border-radius: 10px; overflow: hidden;" id="feedingArea">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 40px;">🐱</div>
+                    </div>
+                    <div>Score: <span id="feedingScore">0</span> | Time: <span id="feedingTime">30</span>s</div>
+                `;
+                
+                document.getElementById('miniGameContent').innerHTML = content;
+                
+                this.feedingScore = 0;
+                this.feedingTime = 30;
+                this.feedingInterval = setInterval(() => this.createFallingFood(), 800);
+                this.feedingTimer = setInterval(() => this.updateFeedingTimer(), 1000);
+            }
+            
+            createFallingFood() {
+                const foods = ['🍎', '🍕', '🍔', '🥕', '🍞', '🥛'];
+                const food = document.createElement('div');
+                food.textContent = foods[Math.floor(Math.random() * foods.length)];
+                food.style.position = 'absolute';
+                food.style.top = '0px';
+                food.style.left = Math.random() * 250 + 'px';
+                food.style.fontSize = '24px';
+                food.style.cursor = 'pointer';
+                food.onclick = () => this.catchFood(food);
+                
+                const area = document.getElementById('feedingArea');
+                area.appendChild(food);
+                
+                const fall = setInterval(() => {
+                    const currentTop = parseInt(food.style.top);
+                    if (currentTop > 270) {
+                        clearInterval(fall);
+                        food.remove();
+                    } else {
+                        food.style.top = currentTop + 5 + 'px';
+                    }
+                }, 50);
+            }
+            
+            catchFood(food) {
+                this.feedingScore += 10;
+                document.getElementById('feedingScore').textContent = this.feedingScore;
+                food.remove();
+                
+                // Create catch effect
+                const effect = document.createElement('div');
+                effect.textContent = '+10';
+                effect.style.position = 'absolute';
+                effect.style.color = '#4ecdc4';
+                effect.style.fontWeight = 'bold';
+                effect.style.left = food.style.left;
+                effect.style.top = food.style.top;
+                effect.style.pointerEvents = 'none';
+                document.getElementById('feedingArea').appendChild(effect);
+                
+                setTimeout(() => effect.remove(), 1000);
+            }
+            
+            updateFeedingTimer() {
+                this.feedingTime--;
+                document.getElementById('feedingTime').textContent = this.feedingTime;
+                
+                if (this.feedingTime <= 0) {
+                    this.completeFeedingGame();
+                }
+            }
+            
+            completeFeedingGame() {
+                clearInterval(this.feedingInterval);
+                clearInterval(this.feedingTimer);
+                
+                const bonus = this.feedingScore * 2;
+                this.coins += bonus;
+                this.gainXP(20);
+                this.gamesCompleted++;
+                
+                setTimeout(() => {
+                    alert(`Feeding Frenzy Complete! 🎉\nScore: ${this.feedingScore}\nBonus: ${bonus} coins!`);
+                    this.closeMiniGame();
+                }, 500);
+            }
+            
+            openColorGame() {
+                this.setupColorGame();
+                document.getElementById('miniGameOverlay').style.display = 'flex';
+            }
+            
+            setupColorGame() {
+                const colors = ['🔴', '🟡', '🟢', '🔵', '🟣', '🟠'];
+                this.targetColor = colors[Math.floor(Math.random() * colors.length)];
+                this.colorScore = 0;
+                this.colorRound = 1;
+                this.maxRounds = 10;
+                
+                const content = `
+                    <h2>🌈 Color Match</h2>
+                    <p>Click the <strong>${this.targetColor}</strong> circles!</p>
+                    <div style="margin: 20px 0;">Round: <span id="colorRound">1</span>/10 | Score: <span id="colorScore">0</span></div>
+                    <div id="colorGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 300px; margin: 0 auto;"></div>
+                `;
+                
+                document.getElementById('miniGameContent').innerHTML = content;
+                this.generateColorRound();
+            }
+            
+            generateColorRound() {
+                const colors = ['🔴', '🟡', '🟢', '🔵', '🟣', '🟠'];
+                const grid = document.getElementById('colorGrid');
+                grid.innerHTML = '';
+                
+                // Generate 9 circles with random colors, ensuring at least one target color
+                const circles = [];
+                circles.push(this.targetColor); // Ensure at least one target
+                
+                for (let i = 1; i < 9; i++) {
+                    circles.push(colors[Math.floor(Math.random() * colors.length)]);
+                }
+                
+                circles.sort(() => Math.random() - 0.5);
+                
+                circles.forEach(color => {
+                    const circle = document.createElement('div');
+                    circle.textContent = color;
+                    circle.style.fontSize = '40px';
+                    circle.style.cursor = 'pointer';
+                    circle.style.textAlign = 'center';
+                    circle.style.padding = '20px';
+                    circle.style.borderRadius = '50%';
+                    circle.style.background = 'rgba(255,255,255,0.1)';
+                    circle.onclick = () => this.clickColor(color, circle);
+                    grid.appendChild(circle);
+                });
+                
+                // Update display
+                document.getElementById('colorRound').textContent = this.colorRound;
+                document.getElementById('colorScore').textContent = this.colorScore;
+            }
+            
+            clickColor(color, element) {
+                if (color === this.targetColor) {
+                    this.colorScore += 10;
+                    element.style.background = '#4ecdc4';
+                    
+                    setTimeout(() => {
+                        this.colorRound++;
+                        if (this.colorRound > this.maxRounds) {
+                            this.completeColorGame();
+                        } else {
+                            // Generate new target color
+                            const colors = ['🔴', '🟡', '🟢', '🔵', '🟣', '🟠'];
+                            this.targetColor = colors[Math.floor(Math.random() * colors.length)];
+                            document.querySelector('#miniGameContent p').innerHTML = `Click the <strong>${this.targetColor}</strong> circles!`;
+                            this.generateColorRound();
+                        }
+                    }, 500);
+                } else {
+                    element.style.background = '#e74c3c';
+                    setTimeout(() => {
+                        element.style.background = 'rgba(255,255,255,0.1)';
+                    }, 300);
+                }
+            }
+            
+            completeColorGame() {
+                const bonus = this.colorScore * 3;
+                this.coins += bonus;
+                this.gainXP(30);
+                this.gamesCompleted++;
+                
+                setTimeout(() => {
+                    alert(`Color Match Complete! 🎉\nScore: ${this.colorScore}\nBonus: ${bonus} coins!`);
+                    this.closeMiniGame();
+                }, 500);
+            }
+            
+            closeMiniGame() {
+                document.getElementById('miniGameOverlay').style.display = 'none';
+                
+                // Clear any intervals
+                if (this.feedingInterval) clearInterval(this.feedingInterval);
+                if (this.feedingTimer) clearInterval(this.feedingTimer);
+                
+                this.updateDisplay();
+            }
+            
+            resetPet() {
+                this.stats = { hunger: 100, happiness: 100, health: 100, energy: 100 };
+                this.level = 1;
+                this.xp = 0;
+                this.coins = 0;
+                this.age = 0;
+                this.isAlive = true;
+                this.mood = 'happy';
+                this.birthTime = Date.now();
+                this.gamesCompleted = 0;
+                
+                // Reset achievements
+                this.achievements.forEach(a => a.unlocked = false);
+                
+                // Reset shop
+                this.shopItems.forEach(item => item.owned = false);
+                
+                // Random pet
+                this.petType = this.petTypes[Math.floor(Math.random() * this.petTypes.length)];
+                this.name = this.names[Math.floor(Math.random() * this.names.length)];
+                
+                this.showMessage(`Meet ${this.name}! Your new adventure begins! 🌟`);
+                this.renderAchievements();
+                this.renderShop();
+                this.updateDisplay();
+            }
+        }
+
+        // Global pet instance
+        let pet = new UltimateVirtualPet();
+
+        // Global functions for buttons
+        function feedPet() { pet.feedPet(); }
+        function playWithPet() { pet.playWithPet(); }
+        function cleanPet() { pet.cleanPet(); }
+        function sleepPet() { pet.sleepPet(); }
+        function petPet() { pet.petPet(); }
+        function petClick() { 
+            pet.petClick(); 
+            // Unlock first pet achievement
+            const firstPetAchievement = pet.achievements.find(a => a.id === 'first_pet');
+            if (firstPetAchievement && !firstPetAchievement.unlocked) {
+                firstPetAchievement.unlocked = true;
+                pet.showNotification('Achievement Unlocked: First Pet! 🏆');
+                pet.coins += 50;
+                pet.renderAchievements();
+            }
+        }
+        function toggleWeather() { pet.toggleWeather(); }
+        function openMemoryGame() { pet.openMemoryGame(); }
+        function openFeedingGame() { pet.openFeedingGame(); }
+        function openColorGame() { pet.openColorGame(); }
+        function closeMiniGame() { pet.closeMiniGame(); }
+        function resetPet() { 
+            if (confirm('Are you sure you want to start over with a new pet?')) {
+                pet.resetPet(); 
+            }
+        }
+    </script>
+</body>
+</html>
